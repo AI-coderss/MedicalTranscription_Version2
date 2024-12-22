@@ -1,5 +1,6 @@
 .sidebar {
-  flex: 1;
+  width: 20%; /* Set a fixed width for the sidebar */
+ /* Ensure it remains responsive */
   padding: 20px;
   background-color: #f8f9fa; /* Light neutral background */
   border-radius: 8px; /* Rounded corners */
@@ -58,5 +59,6 @@
   color: #ffffff; /* White text on hover */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
+
 
 
