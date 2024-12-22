@@ -1,0 +1,62 @@
+.sidebar {
+  flex: 1;
+  padding: 20px;
+  background-color: #f8f9fa; /* Light neutral background */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  color: #333; /* Neutral text color for readability */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between sidebar items */
+}
+
+.sidebar-item {
+  padding: 10px 15px;
+  border-radius: 4px; /* Rounded corners for items */
+  background-color: #ffffff; /* Clean white background */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #555; /* Neutral text color */
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.sidebar-item:hover {
+  background-color: #007bff; /* Blue background on hover */
+  color: #ffffff; /* White text on hover */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.sidebar-item.active {
+  background-color: #007bff; /* Blue background for active items */
+  color: #ffffff; /* White text */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Strong shadow for active state */
+}
+
+.sidebar-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333; /* Neutral text color */
+  margin-bottom: 10px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: 4px; /* Slight rounding for footer */
+  text-align: center;
+  background-color: #ffffff; /* Clean white background */
+  font-size: 1rem;
+  color: #555; /* Neutral text color */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for footer */
+}
+
+.sidebar-footer:hover {
+  background-color: #007bff; /* Blue background on hover */
+  color: #ffffff; /* White text on hover */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+
