@@ -33,7 +33,7 @@ h2 {
 }
 
 label {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #555;
   font-weight: bold;
 }
@@ -41,13 +41,15 @@ label {
 .input {
   width: 100%;
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   border-radius: 4px;
   font-size: 14px;
 }
 /* Set the resize property and height for the textarea elements */
 textarea {
   resize: vertical;
+  border: 1px solid #ececec;
+  background-color: #ffffff;
   height: 100px;
 }
 .input:hover {

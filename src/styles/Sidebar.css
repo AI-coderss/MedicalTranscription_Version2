@@ -1,6 +1,5 @@
 .sidebar {
-  width: 20%; /* Set a fixed width for the sidebar */
- /* Ensure it remains responsive */
+  width: 21%; /* Set a fixed width for the sidebar */
   padding: 20px;
   background-color: #f8f9fa; /* Light neutral background */
   border-radius: 8px; /* Rounded corners */
@@ -21,6 +20,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  flex-grow: 0; /* Prevent excessive stretching */
 }
 
 .sidebar-item:hover {
@@ -32,7 +32,7 @@
 .sidebar-item.active {
   background-color: #007bff; /* Blue background for active items */
   color: #ffffff; /* White text */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Strong shadow for active state */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Strong shadow on active state */
 }
 
 .sidebar-header {
@@ -52,6 +52,7 @@
   color: #555; /* Neutral text color */
   transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for footer */
+  flex-shrink: 0; /* Prevent stretching */
 }
 
 .sidebar-footer:hover {
@@ -59,6 +60,7 @@
   color: #ffffff; /* White text on hover */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
+
 
 
 

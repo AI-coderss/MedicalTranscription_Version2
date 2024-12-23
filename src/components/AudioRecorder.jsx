@@ -26,6 +26,16 @@ const AudioRecorder = ({ setFields }) => {
   const resetRecording = () => {
     setIsRecording(false);
     setIsPaused(false);
+    // Clear all fields
+    setFields({
+      personalHistory: "",
+      chiefComplaint: "",
+      presentIllness: "",
+      medicationHistory: "",
+      pastHistory: "",
+      familyHistory: "",
+      requiredLabTestsAndProcedures: "",
+    });
   };
 
   const handleTranscription = async (recordedBlob) => {
@@ -104,6 +114,7 @@ const AudioRecorder = ({ setFields }) => {
 };
 
 export default AudioRecorder;
+
 
 
 
