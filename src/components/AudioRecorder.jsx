@@ -83,7 +83,7 @@ const AudioRecorder = ({ setFields }) => {
 
   return (
     <div className="audio-recorder">
-      <h3>MEDICAL TRANSCRIPTION</h3>
+       <h3>MEDICAL TRANSCRIPTION 🎙️</h3>
       <ReactMic
         record={isRecording}
         pause={isPaused}

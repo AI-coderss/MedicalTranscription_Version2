@@ -1,9 +1,10 @@
 .nav {
-  position: relative;
-  height: 80px;
+  position: fixed;
+  height: 75px;
   width: 100%;
-  background: #007bff;
+  background: #007bff; /* Navbar background color */
   overflow: hidden;
+
 }
 
 .navLogo {
@@ -11,30 +12,39 @@
   top: 0;
   left: 0;
 }
-a{
+
+a {
   text-decoration: none;
+  color: white;
 }
+
 .navItemContainer {
-  height: 80px;
+  height: 75px;
   width: 800px;
   position: absolute;
   right: 0;
   top: 0;
   display: flex;
+  
 }
-
+.navItem.active a{
+  color: #007bff;
+}
 .navItem {
-  height: 100%;
+  height: 90%;
   width: 200px;
   text-align: center;
   line-height: 80px;
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: bolder;
   z-index: 2;
   cursor: pointer;
-  margin:0;
+  margin: 0;
   user-select: none;
+  color: white; /* Default color for unselected items */
+  transition: color 0.3s ease;
 }
+
 
 .navItemActiveContainer {
   position: absolute;
@@ -54,7 +64,9 @@ a{
   margin: 0;
 }
 
-.navItemActiveLeft, .navItemActiveCenter, .navItemActiveRight {
+.navItemActiveLeft,
+.navItemActiveCenter,
+.navItemActiveRight {
   position: absolute;
   bottom: 0;
   margin: 0;
@@ -67,8 +79,9 @@ a{
   left: 0;
   border-radius: 0px 0px 0px 0px;
   z-index: 1;
-  margin:0;
+  margin: 0;
 }
+
 .navItemActiveCenter {
   background: white;
   width: 200px;
@@ -76,8 +89,9 @@ a{
   left: 30px;
   border-radius: 30px 30px 0px 0px;
   z-index: 1;
-  margin:0;
+  margin: 0;
 }
+
 .navItemActiveRight {
   background: white;
   width: 30px;
@@ -85,13 +99,15 @@ a{
   right: 0;
   border-radius: 0px 0px 0px 0px;
   z-index: 1;
-  margin:0;
+  margin: 0;
 }
 
-.navItemActiveCopyLeft, .navItemActiveCopyCenter, .navItemActiveCopyRight {
+.navItemActiveCopyLeft,
+.navItemActiveCopyCenter,
+.navItemActiveCopyRight {
   position: absolute;
   bottom: 0;
-  margin:0;
+  margin: 0;
 }
 
 .navItemActiveCopyLeft {
@@ -100,10 +116,11 @@ a{
   height: 60px;
   left: 0;
   border-radius: 0px 0px 30px 0px;
-  background:  #007bff;
+  background: #007bff;
   z-index: 2;
-  margin:0;
+  margin: 0;
 }
+
 .navItemActiveCopyCenter {
   background: white;
   width: 200px;
@@ -111,17 +128,18 @@ a{
   left: 30px;
   border-radius: 30px 30px 0px 0px;
   z-index: 2;
-  margin:0;
+  margin: 0;
 }
+
 .navItemActiveCopyRight {
   background: white;
   width: 30px;
   height: 60px;
   right: 0;
   border-radius: 0px 0px 0px 30px;
-  background:  #007bff;
+  background: #007bff;
   z-index: 2;
-  margin:0;
+  margin: 0;
 }
 
 .burgerMenu {

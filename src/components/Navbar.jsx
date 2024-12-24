@@ -16,7 +16,7 @@ const Navbar = () => {
         />
       </div>
       <div className="navItemContainer">
-        {['Home', 'Follow-up Visit', 'AI Second Opinion'].map((label, index) => (
+        {['Home 🏠', 'Follow-up Visit 🩺', 'AI Second Opinion'].map((label, index) => (
           <div
             key={index}
             className={`navItem ${activeIndex === index ? 'active' : ''}`}
