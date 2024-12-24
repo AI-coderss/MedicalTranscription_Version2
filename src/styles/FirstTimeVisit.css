@@ -9,11 +9,24 @@
   border-radius: 8px; /* Rounded corners */
   height: auto; /* Dynamically adjust height */
 }
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Space between title and gif */
+  margin-bottom: 10px;
+}
 
-h2 {
+.title-container h2 {
   font-size: 1.5rem;
-  text-transform: uppercase;
   color: #333; /* Darker text for better readability */
+  margin: 0;
+}
+
+.title-gif {
+  width: 100px; /* Adjust size as needed */
+  height: auto;
+  background: transparent;
 }
 
 .fields {

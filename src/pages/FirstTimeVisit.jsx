@@ -16,7 +16,10 @@ const FirstTimeVisit = ({ fields }) => {
 
   return (
     <div className="first-time-visit">
-      <h2>First Time Visit</h2>
+      <div className="title-container">
+        <h2>First Time Visit</h2>
+        <img src="/img1.gif" alt="Decoration" className="title-gif" />
+      </div>
       <div className="fields">
         <div className="field-group">
           <label htmlFor="personal-history">Personal History:</label>
