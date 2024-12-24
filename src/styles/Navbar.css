@@ -27,7 +27,7 @@ a {
   display: flex;
   
 }
-.navItem.active a{
+ .navItem.active {
   color: #007bff;
 }
 .navItem {
@@ -43,8 +43,11 @@ a {
   user-select: none;
   color: white; /* Default color for unselected items */
   transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center text within the item */
+  text-decoration: none; /* Remove underline from links */
 }
-
 
 .navItemActiveContainer {
   position: absolute;

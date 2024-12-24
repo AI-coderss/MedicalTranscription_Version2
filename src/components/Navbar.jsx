@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/Navbar.css';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "../styles/Navbar.css";
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleNavigation = (index) => {
+    setActiveIndex(index);
+  };
 
   return (
     <div className="nav">
@@ -16,17 +20,18 @@ const Navbar = () => {
         />
       </div>
       <div className="navItemContainer">
-        {['Home 🏠', 'Follow-up Visit 🩺', 'AI Second Opinion'].map((label, index) => (
-          <div
-            key={index}
-            className={`navItem ${activeIndex === index ? 'active' : ''}`}
-            onClick={() => setActiveIndex(index)}
-          >
-            <Link to={index === 0 ? '/' : index === 1 ? '/follow-up' : '/ai-second-opinion'}>
+        {["Home 🏠", "Follow-up Visit 🩺", "AI Second Opinion"].map(
+          (label, index) => (
+            <Link
+              to={index === 0 ? "/" : index === 1 ? "/follow-up" : "/ai-second-opinion"}
+              key={index}
+              className={`navItem ${activeIndex === index ? "active" : ""}`}
+              onClick={() => handleNavigation(index)}
+            >
               {label}
             </Link>
-          </div>
-        ))}
+          )
+        )}
         <div
           className="navItemActiveContainer"
           style={{ transform: `translateX(${activeIndex * 200}px)` }}
@@ -53,4 +58,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
