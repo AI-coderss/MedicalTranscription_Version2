@@ -60,7 +60,30 @@
   color: #ffffff; /* White text on hover */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 75px; /* Directly below the navbar */
+    left: 0;
+    width: 100%; /* Occupy the full width */
+    height: 19%; /* Occupy 20% of the screen height */
+    z-index: 10; /* Ensure it's above other content */
+    padding: 10px;
+    border-radius: 0; /* Remove rounded corners for fullscreen layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    gap: 10px; /* Adjust gap for compact layout */
+  }
 
+  h3 {
+    display: none /* Adjust font size */
+  }
+
+  .sidebar-footer {
+    display: none; /* Hide the footer on mobile for simplicity */
+  }
+}
 
 
 

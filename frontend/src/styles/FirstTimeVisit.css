@@ -9,6 +9,7 @@
   border-radius: 8px; /* Rounded corners */
   height: auto; /* Dynamically adjust height */
 }
+
 .title-container {
   display: flex;
   align-items: center;
@@ -36,7 +37,6 @@
   width: 95%;
   height: auto;
   align-items: stretch;
-
 }
 
 label {
@@ -74,7 +74,7 @@ textarea:focus {
   outline: none; /* Remove default outline */
 }
 
-.copy-icon-container  {
+.copy-icon-container {
   position: absolute;
   bottom: 10px;
   right: 2px;
@@ -120,6 +120,70 @@ textarea:focus {
   background-color: #003f7f; /* Pressed state background */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2) inset; /* Inset shadow for active state */
 }
+
+/* Media Query for Mobile Layout */
+@media (max-width: 768px) {
+  .first-time-visit {
+    padding: 35px;
+    z-index: 0;
+    background: #f8f9fa;
+    display: flex;
+    box-shadow: none;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15%;
+    height: 100vh;
+  
+  }
+
+  .title-container {
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .fields {
+    grid-template-columns: 1fr; /* One field per row */
+    gap: 20px; /* Reduce gap for better spacing */
+    width: 100%; /* Use full width */
+    z-index: 0;
+  }
+
+  .textarea-container {
+    width: 100%;
+  }
+
+  textarea {
+    font-size: 0.9rem; /* Slightly smaller text */
+    resize: vertical;
+    width: 100%;
+  height: auto;
+  }
+  .title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 8px; /* Space between title and gif */
+
+  }
+  
+  .title-container h2 {
+    font-size: 1.3rem;
+    color: #333; /* Darker text for better readability */
+    margin: 0;
+  }
+  
+  .title-gif {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    background: transparent;
+  }
+  label{
+    font-size: 0.9rem;
+  }
+}
+
 
 
 
