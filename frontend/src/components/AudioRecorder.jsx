@@ -10,27 +10,34 @@ const AudioRecorder = ({ setFields }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isTranscriptReady, setIsTranscriptReady] = useState(false); // New state for the New Recording button
 
   // Create a Howl instance for the click sound
   const clickSound = new Howl({
     src: ["/sound.mp3"], // Add the correct path to your sound file
     volume: 0.2,
   });
-
+  const stopSound = new Howl({
+    src: ["/ui.wav"], // Add the correct path to your sound file
+    volume: 0.2,
+  });
   const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
 
   const playClickSound = () => {
     clickSound.play();
   };
-
+  const playStopSound = () => {
+    stopSound.play();
+  };
   const startRecording = () => {
     playClickSound();
     setIsRecording(true);
     setIsPaused(false);
+    setIsTranscriptReady(false); // Reset transcript readiness on new recording
   };
 
   const stopRecording = () => {
-    playClickSound();
+    playStopSound();
     setIsRecording(false);
     setIsPaused(false);
   };
@@ -44,6 +51,7 @@ const AudioRecorder = ({ setFields }) => {
     playClickSound();
     setIsRecording(false);
     setIsPaused(false);
+    setIsTranscriptReady(false); // Reset transcript readiness
 
     // Clear all fields
     setFields({
@@ -91,6 +99,9 @@ const AudioRecorder = ({ setFields }) => {
 
       console.log("Fields Response: ", fieldsData);
       setFields(fieldsData);
+
+      // Mark transcript as ready
+      setIsTranscriptReady(true);
     } catch (error) {
       console.error("Error during transcription or field extraction:", error);
     } finally {
@@ -124,7 +135,9 @@ const AudioRecorder = ({ setFields }) => {
         <button onClick={togglePauseResume} disabled={!isRecording}>
           {isPaused ? "Resume Recording" : "Pause Recording"}
         </button>
-        <button onClick={resetRecording}>New Recording</button>
+        <button onClick={resetRecording} disabled={!isTranscriptReady}>
+          New Recording
+        </button>
       </div>
       {loading && (
         <div className="loader-container">
@@ -136,6 +149,7 @@ const AudioRecorder = ({ setFields }) => {
 };
 
 export default AudioRecorder;
+
 
 
 
