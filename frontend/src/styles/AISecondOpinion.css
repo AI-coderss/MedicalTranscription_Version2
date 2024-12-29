@@ -2,7 +2,23 @@
     padding: 20px;
     font-family: Arial, sans-serif;
   }
+  .title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
   
+  .title-container h2 {
+    font-size: 2rem;
+    margin-right: 10px; /* Add spacing between the title and the GIF */
+    text-align: center;
+  }
+  
+  .title-gif {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+  }  
   .fetch-button {
     padding: 10px 20px;
     background-color: #007bff;

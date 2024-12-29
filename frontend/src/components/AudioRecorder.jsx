@@ -9,15 +9,18 @@ const AudioRecorder = ({ setFields }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const clickSound = new Audio("/click.wav");
+  clickSound.volume = 0.2;
   const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
 
   const startRecording = () => {
+    clickSound.play();
     setIsRecording(true);
     setIsPaused(false);
   };
 
   const stopRecording = () => {
+    clickSound.play();
     setIsRecording(false);
     setIsPaused(false);
   };
@@ -27,6 +30,7 @@ const AudioRecorder = ({ setFields }) => {
   };
 
   const resetRecording = () => {
+    clickSound.play();
     setIsRecording(false);
     setIsPaused(false);
 

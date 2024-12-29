@@ -21,7 +21,6 @@ const AISecondOpinion = () => {
       setError(null);
 
       try {
-        // Call the API to generate the AI second opinion
         const response = await axios.post("http://localhost:5000/api/generate", {
           input: transcript,
         });
@@ -43,7 +42,6 @@ const AISecondOpinion = () => {
     fetchAnalysisResult();
   }, [transcript]);
 
-  // Copy the result to clipboard
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(
       () => alert("Copied to clipboard!"),
@@ -51,7 +49,6 @@ const AISecondOpinion = () => {
     );
   };
 
-  // Download the result as a PDF
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text(analysisResult, 14, 14);
@@ -60,7 +57,10 @@ const AISecondOpinion = () => {
 
   return (
     <div className="ai-second-opinion-page">
-      <h1>AI Second Opinion</h1>
+      <div className="title-container">
+        <h2>AI Second Opinion</h2>
+        <img src="/img4.gif" alt="Loading GIF" className="title-gif" />
+      </div>
       <div className="ai-second-opinion-content">
         {loading ? (
           <p>Loading...</p>
@@ -88,6 +88,7 @@ const AISecondOpinion = () => {
 };
 
 export default AISecondOpinion;
+
 
 
 
