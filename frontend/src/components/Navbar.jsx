@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Howl } from "howler"; // Import Howler.js
 import "../styles/Navbar.css";
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Create a Howl instance for the navigation sound
+  const navSound = new Howl({
+    src: ["/nav.wav"], // Path to the sound file
+    volume: 0.3, // Set volume
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,6 +30,7 @@ const Navbar = () => {
   const handleNavigation = (index) => {
     setActiveIndex(index);
     setMenuOpen(false); // Close the menu after clicking a link
+    navSound.play(); // Play the navigation sound
   };
 
   const toggleMenu = () => {
@@ -115,6 +123,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 
 

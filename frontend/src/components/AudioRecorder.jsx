@@ -13,8 +13,8 @@ const AudioRecorder = ({ setFields }) => {
 
   // Create a Howl instance for the click sound
   const clickSound = new Howl({
-    src: ["/click.mp3"], // Add the correct path to your sound file
-    volume: 0.1,
+    src: ["/sound.mp3"], // Add the correct path to your sound file
+    volume: 0.2,
   });
 
   const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
