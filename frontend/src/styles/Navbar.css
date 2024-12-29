@@ -48,12 +48,24 @@
   font-size: 1rem;
   text-align: left;
   text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: inline-block;
+  width: 100%; /* Ensures it spans the available width */
 }
 
 .mobileNavItem:hover {
   background-color: #008fb3;
 }
-
+.mobileNavItem.active {
+  background-color: white; /* Set active background to white */
+    color: #007bff; /* Text color */
+    border-radius: 50px 0 0 50px; /* Oval shape on the left */
+    padding: 10px 20px; /* Padding for better aesthetics */
+    margin-left: 20px; /* Margin from the left side */
+    margin-right: 0; /* Ensure it aligns properly with the screen */
+    width: calc(100% - 20px); /* Full width minus the left margin */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); 
+}
 
 a {
   text-decoration: none;

@@ -1,0 +1,77 @@
+.page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .fetch-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .fetch-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .response-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section {
+    margin-bottom: 15px;
+  }
+  
+  .section h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .section p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+  }
+  .analysis-result-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .analysis-result {
+    white-space: pre-wrap; /* Preserve line breaks */
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .copy-icon-container {
+    margin-top: 10px;
+    cursor: pointer;
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .copy-icon-container:hover {
+    color: #0056b3;
+  }
+  
+  

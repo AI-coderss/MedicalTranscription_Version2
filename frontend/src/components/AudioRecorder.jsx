@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { ReactMic } from "react-mic";
 import axios from "axios";
 import Loader from "./Loader";
+import useTranscriptStore from "../store/useTranscriptStore"; // Import Zustand store
 import "../styles/AudioRecorder.css";
 
 const AudioRecorder = ({ setFields }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
 
   const startRecording = () => {
     setIsRecording(true);
@@ -26,6 +29,7 @@ const AudioRecorder = ({ setFields }) => {
   const resetRecording = () => {
     setIsRecording(false);
     setIsPaused(false);
+
     // Clear all fields
     setFields({
       personalHistory: "",
@@ -61,6 +65,9 @@ const AudioRecorder = ({ setFields }) => {
       const transcript = transcriptionData.transcript;
       console.log("Transcript: ", transcript);
 
+      // Save transcript to Zustand store
+      setTranscript(transcript);
+
       // Step 2: Extract fields from the transcript
       const { data: fieldsData } = await axios.post(
         "http://localhost:5000/extract_fields",
@@ -83,7 +90,7 @@ const AudioRecorder = ({ setFields }) => {
 
   return (
     <div className="audio-recorder">
-       <h3>MEDICAL TRANSCRIPTION 🎙️</h3>
+      <h3>MEDICAL TRANSCRIPTION 🎙️</h3>
       <ReactMic
         record={isRecording}
         pause={isPaused}
@@ -114,6 +121,7 @@ const AudioRecorder = ({ setFields }) => {
 };
 
 export default AudioRecorder;
+
 
 
 
