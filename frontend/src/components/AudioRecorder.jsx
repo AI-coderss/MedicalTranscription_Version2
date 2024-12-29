@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ReactMic } from "react-mic";
 import axios from "axios";
+import { Howl } from "howler"; // Import Howler.js
 import Loader from "./Loader";
 import useTranscriptStore from "../store/useTranscriptStore"; // Import Zustand store
 import "../styles/AudioRecorder.css";
@@ -9,28 +10,38 @@ const AudioRecorder = ({ setFields }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
-  const clickSound = new Audio("/click.wav");
-  clickSound.volume = 0.2;
+
+  // Create a Howl instance for the click sound
+  const clickSound = new Howl({
+    src: ["/click.mp3"], // Add the correct path to your sound file
+    volume: 0.1,
+  });
+
   const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
 
-  const startRecording = () => {
+  const playClickSound = () => {
     clickSound.play();
+  };
+
+  const startRecording = () => {
+    playClickSound();
     setIsRecording(true);
     setIsPaused(false);
   };
 
   const stopRecording = () => {
-    clickSound.play();
+    playClickSound();
     setIsRecording(false);
     setIsPaused(false);
   };
 
   const togglePauseResume = () => {
+    playClickSound();
     setIsPaused((prev) => !prev);
   };
 
   const resetRecording = () => {
-    clickSound.play();
+    playClickSound();
     setIsRecording(false);
     setIsPaused(false);
 
@@ -125,6 +136,7 @@ const AudioRecorder = ({ setFields }) => {
 };
 
 export default AudioRecorder;
+
 
 
 
