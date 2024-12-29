@@ -11,7 +11,7 @@ const Navbar = () => {
   // Create a Howl instance for the navigation sound
   const navSound = new Howl({
     src: ["/nav.wav"], // Path to the sound file
-    volume: 0.3, // Set volume
+    volume: 0.05, // Set volume
   });
 
   useEffect(() => {
