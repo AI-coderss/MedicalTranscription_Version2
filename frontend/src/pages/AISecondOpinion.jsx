@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
-import useTranscriptStore from "../store/useTranscriptStore"; // Zustand store
-import "../styles/AISecondOpinion.css";
+import useTranscriptStore from "../store/useTranscriptStore"; // Zustand store for managing transcript
+import "../styles/AISecondOpinion.css"; // Custom styles
 
 const AISecondOpinion = () => {
-  const transcript = useTranscriptStore((state) => state.transcript); // Zustand getter
+  const transcript = useTranscriptStore((state) => state.transcript);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Function to send transcript to Flask endpoint
   const sendTranscriptToFlask = async () => {
+    console.log("Transcript:", transcript);
     if (!transcript) {
       alert("No transcript available to send.");
       return;
@@ -19,9 +20,16 @@ const AISecondOpinion = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:5000/process-transcript", {
-        transcript,
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8502/process-transcript", // Use Flask endpoint here
+        { transcript },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Required for CORS with credentials
+        }
+      );
 
       if (response.status === 200) {
         alert("Transcript sent successfully to Streamlit app!");
@@ -57,10 +65,10 @@ const AISecondOpinion = () => {
               Send Transcript to Streamlit App
             </button>
             <iframe
-              src="http://localhost:8501/?embed=true"
+              src="http://localhost:8501/?embed=true" // Embed the Streamlit app
               style={{
                 width: "100%",
-                height: "600px",
+                height: "700px",
                 border: "none",
                 marginTop: "20px",
               }}
@@ -74,6 +82,11 @@ const AISecondOpinion = () => {
 };
 
 export default AISecondOpinion;
+
+
+
+
+
 
 
 

@@ -2,8 +2,9 @@ import os
 import streamlit as st
 from streamlit_extras.bottom_container import bottom
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from threading import Thread
+from flask_cors import CORS
 from langchain_core.messages import AIMessage, HumanMessage
 from openai import OpenAI
 from templates.carousel import carousel_html
@@ -11,8 +12,6 @@ from templates.character import character_3d_component
 from utils.functions import (
     get_vector_store,
     get_response,
-    text_to_audio,
-    autoplay_audio,
     speech_to_text,
 )
 from streamlit_chat_widget import chat_input_widget
@@ -23,68 +22,49 @@ client = OpenAI()
 
 # Flask setup
 flask_app = Flask(__name__)
+CORS(
+    flask_app,
+    resources={r"/*": {"origins": "http://localhost:3000"}},
+    supports_credentials=True,
+)
+
+@flask_app.route('/process-transcript', methods=['OPTIONS'])
+def preflight_request():
+    response = Response()
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response
 
 @flask_app.route('/process-transcript', methods=['POST'])
 def process_transcript():
     data = request.get_json()
-    transcript = data.get("transcript")
+    if not data or "transcript" not in data:
+        return jsonify({"message": "Invalid request: No transcript provided."}), 400
 
-    if not transcript:
-        return jsonify({"message": "No transcript provided."}), 400
+    transcript = data["transcript"]
 
-    # Save the transcript in Streamlit session state
+    # Update Streamlit session state
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
     st.session_state.transcript = transcript
     st.session_state.chat_history.append(HumanMessage(content=transcript))
-
     return jsonify({"message": "Transcript processed successfully!"}), 200
 
-
-# Run Flask in a separate thread
+# Flask background thread
 class FlaskThread(Thread):
     def __init__(self, app):
         super().__init__()
-        self.server = None
         self.app = app
 
     def run(self):
-        self.server = self.app.run(port=8502, debug=False, use_reloader=False)
+        self.app.run(port=8502, debug=False, use_reloader=False)
 
-    def shutdown(self):
-        if self.server:
-            self.server.shutdown()
-
-
-# Initialize Flask thread
 flask_thread = FlaskThread(flask_app)
 flask_thread.start()
 
 def main():
-    # Load and apply custom CSS
-    with open("style.css") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-    # Sidebar content
-    with st.sidebar:
-        title = "Medical AI Assistant"
-        name = "Mohammed Bahageel"
-        profession = "Artificial Intelligence Developer"
-        imgUrl = "https://cdn.dribbble.com/users/1373613/screenshots/5384701/____-10m.gif"
-        st.markdown(
-            f"""
-            <img class="profileImage" src="{imgUrl}" alt="Your Photo">
-            <div class="textContainer">
-            <div class="title"><p>{title}</p></div>
-            <p>{name}</p>
-            <p>{profession}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # Embed carousel HTML into Streamlit sidebar
-        st.components.v1.html(carousel_html, height=250, width=350)
-        st.components.v1.html(character_3d_component, height=400, width=300)
-
     # Initialize session states
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
@@ -96,6 +76,12 @@ def main():
     if "vector_store" not in st.session_state:
         st.session_state.vector_store = get_vector_store()
 
+    if "transcript" not in st.session_state:
+        st.session_state.transcript = None  # Initialize to None
+
+    # Load and apply custom CSS
+    with open("style.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     # Display chat history
     for message in st.session_state.chat_history:
         if isinstance(message, AIMessage):
@@ -105,6 +91,7 @@ def main():
             with st.chat_message("Human", avatar="👩‍⚕️"):
                 st.write(message.content)
 
+    # Chat input widget
     with bottom():
         response = chat_input_widget()
 
@@ -139,6 +126,10 @@ def main():
             response = st.write_stream(get_response(user_query))
             st.session_state.chat_history.append(AIMessage(content=response))
 
-
 if __name__ == "__main__":
     main()
+    flask_app.run(port=8502, debug=True, use_reloader=False)
+  
+
+
+
