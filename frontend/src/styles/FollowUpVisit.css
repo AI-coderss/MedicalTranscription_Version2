@@ -1,0 +1,74 @@
+/* FollowUpVisit.css */
+
+.follow-up-visit {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .department-selection {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .department-selection label {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .department-selection select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .questions-container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 fields per row */
+    gap: 20px; /* Space between fields */
+  }
+  
+  .question-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .question-field label {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .question-field textarea {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; /* Allow vertical resizing only */
+    min-height: 100px; /* Increased height for textarea */
+  }
+  
+  .questions-container textarea:focus {
+    outline: none;
+    border-color: #007bff; /* Highlight border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  @media (max-width: 600px) {
+    .questions-container {
+      grid-template-columns: 1fr; /* Switch to 1 column for smaller screens */
+    }
+  }
+  
+  
+  
+  
+  

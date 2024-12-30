@@ -1,0 +1,23 @@
+/* DepartmentSelector.css */
+
+.department-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .department-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .department-dropdown {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+  }
