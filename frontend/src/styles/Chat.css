@@ -1,5 +1,7 @@
 /* Chat Content (Scrollable Area) */
-
+.chat-container{
+  width: 100%;
+}
 
 .chat-content {
   width: 100%;

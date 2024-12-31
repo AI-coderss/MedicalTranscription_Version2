@@ -134,7 +134,8 @@ a {
   color: #007bff; /* Text color matches active item */
   border-radius: 40px; /* Rounded edges like the active item */
   margin-top: 5px;
-  box-shadow: 3px px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+  height: 55px;
+  box-shadow: 3px px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
   transition: all 0.3s ease; /* Smooth transition for hover effect */
 }
 
