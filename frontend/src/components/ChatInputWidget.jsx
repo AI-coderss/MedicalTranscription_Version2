@@ -3,7 +3,8 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
-import useLanguageStore from "../store/useLanguageStore"; // Import the Zustand store
+import useLanguageStore from "../store/useLanguageStore"; // Import the Zustand store for language
+import useChatVisibilityStore from "../store/useChatVisibilityStore"; // Import Zustand store for chat visibility
 import "../styles/ChatInputWidget.css";
 
 const ChatInputWidget = ({ onSendMessage }) => {
@@ -13,6 +14,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
   const recognitionRef = useRef(null);
 
   const { selectedLanguage } = useLanguageStore(); // Access selected language from Zustand
+  const { setChatVisible } = useChatVisibilityStore(); // Access chat visibility state toggle
 
   const { startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
 
@@ -22,11 +24,12 @@ const ChatInputWidget = ({ onSendMessage }) => {
         const buffer = await audioBlob.arrayBuffer();
         const audioArray = Array.from(new Uint8Array(buffer));
         onSendMessage({ audioFile: audioArray }); // Pass audio data to parent
+        setChatVisible(true); // Set chat visibility
       } catch (error) {
         console.error("Error sending audio blob:", error);
       }
     },
-    [onSendMessage]
+    [onSendMessage, setChatVisible]
   );
 
   const handleRecordingStop = useCallback(async () => {
@@ -62,6 +65,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
           setInputText((prevText) => {
             const newText = prevText + event.results[i][0].transcript;
             adjustTextAreaHeight(); // Dynamically adjust height
+            setChatVisible(true); // Show chat content
             return newText;
           });
         } else {
@@ -85,6 +89,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
     recognitionRef.current = recognition;
     recognition.start();
     setIsRecording(true);
+    setChatVisible(true); // Show chat content
   };
 
   const stopTranscription = () => {
@@ -102,7 +107,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
       }
 
       textAreaRef.current.style.height = "20px"; // Reset to ensure proper recalculation
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight/4}px`; // Adjust based on content
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight / 4}px`; // Adjust based on content
     }
   };
 
@@ -114,6 +119,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
     const newValue = event.target.value;
     setInputText(newValue);
     adjustTextAreaHeight(); // Dynamically adjust height
+    setChatVisible(true); // Show chat content
   };
 
   const handleKeyDown = (event) => {
@@ -130,6 +136,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
       onSendMessage({ text: inputText }); // Send text message to parent
       setInputText("");
       adjustTextAreaHeight(true); // Reset text area height
+      setChatVisible(true); // Show chat content
     }
 
     if (isRecording) {
@@ -150,6 +157,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
       } else {
         startRecording();
         startTranscription();
+        setChatVisible(true); // Show chat content
       }
     }
   };
@@ -180,3 +188,4 @@ const ChatInputWidget = ({ onSendMessage }) => {
 };
 
 export default ChatInputWidget;
+
