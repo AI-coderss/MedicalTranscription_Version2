@@ -13,7 +13,7 @@ const AISecondOpinion = () => {
   const messagesEndRef = useRef(null);
 
   const openai = new OpenAI({
-    apiKey: "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", // Replace with your OpenAI API Key
+    apiKey: "", // Replace with your OpenAI API Key
     dangerouslyAllowBrowser: true,
   });
 
