@@ -1,103 +1,167 @@
-import React, { useState } from "react";
-import axios from "axios";
-import useTranscriptStore from "../store/useTranscriptStore"; // Zustand store for managing transcript
-import "../styles/AISecondOpinion.css"; // Custom styles
+import React, { useEffect, useState, useRef } from "react";
+import useTranscriptStore from "../store/useTranscriptStore";
+import ChatInputWidget from "../components/ChatInputWidget";
+import OpenAI from "openai";
+import "../styles/Chat.css"; // Reuse the Chat styles
 
 const AISecondOpinion = () => {
-  const transcript = useTranscriptStore((state) => state.transcript);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { transcript } = useTranscriptStore();
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isChatVisible, setIsChatVisible] = useState(false); // Toggle state
+  const messagesEndRef = useRef(null);
 
-  // Function to send transcript to Flask endpoint
-  const sendTranscriptToFlask = async () => {
-    console.log("Transcript:", transcript);
-    if (!transcript) {
-      alert("No transcript available to send.");
-      return;
-    }
+  const openai = new OpenAI({
+    apiKey: "", // Replace with your OpenAI API Key
+    dangerouslyAllowBrowser: true,
+  });
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8502/process-transcript", // Use Flask endpoint here
-        { transcript },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // Required for CORS with credentials
-        }
-      );
-
-      if (response.status === 200) {
-        alert("Transcript sent successfully to Streamlit app!");
-      } else {
-        setError("Failed to send the transcript.");
-      }
-    } catch (err) {
-      console.error("Error sending transcript:", err);
-      setError("An error occurred while sending the transcript.");
-    } finally {
-      setLoading(false);
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  return (
-    <div className="ai-second-opinion-page">
-      <div className="title-container">
-        <h2>AI Second Opinion</h2>
-        <img src="/img4.gif" alt="Loading GIF" className="title-gif" />
-      </div>
+  useEffect(() => {
+    if (transcript) {
+      processAIResponse(transcript); // Pass transcript directly to AI model
+    }
+  }, [transcript]);
 
-      <div className="ai-second-opinion-content">
-        {error && <p className="error-message">{error}</p>}
-        {loading ? (
-          <p>Sending transcript...</p>
-        ) : (
-          <>
-            <button
-              className="send-transcript-button"
-              onClick={sendTranscriptToFlask}
-              disabled={!transcript}
-            >
-              Send Transcript to Streamlit App
-            </button>
-            <iframe
-              src="http://localhost:8501/?embed=true" // Embed the Streamlit app
-              style={{
-                width: "100%",
-                height: "700px",
-                border: "none",
-                marginTop: "20px",
-              }}
-              title="Embedded Streamlit App"
-            />
-          </>
-        )}
-      </div>
-    </div>
+  const handleNewMessage = async (userMessage) => {
+    const userText = userMessage.text || "";
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { msg: userText, who: "me" },
+    ]);
+
+    await processAIResponse(userText);
+  };
+
+  const processAIResponse = async (userText) => {
+    setIsTyping(true);
+
+    const promptTemplate = `You are a doctor AI assistant. Your main task is to provide medical diagnosis, recommend lab tests and investigations,
+                          and prescribe the appropriate drugs based on the user's input reply in English only.
+                          User's input
+                          Based on the user's input, provide a helpful and detailed response your answers must be always in English only in English regardless of the user's input language.
+                          follow the following format :
+                          based on the descrbied case
+                          The diagnosis : 
+                          The recommended lab test and investigation: list them 
+                          Drug prescriptions: prescribe the appropriate drugs based on the diagnosis
+                          Recommendations to The Doctor: recommend the doctor with regards to case what they supposed to do ?
+                          Treatment plan : set the appropriate treatment plan for the doctor including the steps to treat the Patient
+                          Please stricly adhere to the above format wherever asked , be more specific and detailed in your answers `;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: promptTemplate },
+          ...messages.map((message) => ({
+            role: message.who === "me" ? "user" : "assistant",
+            content: message.msg,
+          })),
+          { role: "user", content: userText },
+        ],
+        stream: true,
+      });
+
+      let assistantMessage = "";
+
+      for await (const chunk of response) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        assistantMessage += content;
+
+        updateMessages(assistantMessage);
+        scrollToBottom();
+      }
+
+      setIsTyping(false);
+    } catch (error) {
+      console.error("Error streaming AI response:", error);
+      setIsTyping(false);
+    }
+  };
+
+  const updateMessages = (assistantMessage) => {
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages];
+      const lastMessage = updatedMessages[updatedMessages.length - 1];
+
+      if (lastMessage?.who === "bot") {
+        lastMessage.msg = assistantMessage;
+      } else {
+        updatedMessages.push({
+          msg: assistantMessage,
+          who: "bot",
+        });
+      }
+
+      return updatedMessages;
+    });
+  };
+
+  const toggleChatVisibility = () => {
+    setIsChatVisible((prevState) => !prevState);
+  };
+
+  return (
+    <>
+      {isChatVisible && (
+        <div className="chat-container">
+          <div className="chat-content" ref={messagesEndRef}>
+            {messages.map((message, index) => (
+              <div key={index} className={`chat-message ${message.who}`}>
+                {message.who === "bot" && (
+                  <figure className="avatar">
+                    <img
+                      src="https://cdn.dribbble.com/users/1373613/screenshots/5384701/____-10m.gif"
+                      alt="Assistant Avatar"
+                    />
+                  </figure>
+                )}
+                <div className="message-text">{message.msg}</div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="chat-message bot loading">
+                <figure className="avatar">
+                  <img
+                    src="https://cdn.dribbble.com/users/1373613/screenshots/5384701/____-10m.gif"
+                    alt="Assistant Avatar"
+                  />
+                </figure>
+                <div
+                  style={{
+                    padding: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <lottie-player
+                    src="https://lottie.host/47000d95-a3cd-43b8-ba63-fc7b3216f1cf/6gPsoPB6JM.json"
+                    style={{ width: "130px", height: "130px" }}
+                    loop
+                    autoplay
+                    speed="1"
+                    direction="1"
+                    mode="normal"
+                  ></lottie-player>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      <button className="toggle-button" onClick={toggleChatVisibility}>
+        {isChatVisible ? "-" : "+"}
+      </button>
+      <ChatInputWidget onSendMessage={handleNewMessage} />
+    </>
   );
 };
 
 export default AISecondOpinion;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
