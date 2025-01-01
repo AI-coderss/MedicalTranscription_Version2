@@ -97,7 +97,6 @@ const AISecondOpinion = () => {
                           Based on the user's input, provide a helpful and detailed response your answers must be always in English only in English 
                           regardless of the user's input language.
                           follow the following format :
-                          based on the described case
                           The diagnosis : 
                           The recommended lab test and investigation: list them 
                           Drug prescriptions: prescribe the appropriate drugs based on the diagnosis
