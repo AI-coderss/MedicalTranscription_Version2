@@ -114,49 +114,43 @@ const AISecondOpinion = () => {
   return (
     <>
       {isChatVisible && (
-        <div className="chat-container">
-          <div className="chat-content" ref={messagesEndRef}>
-            {messages.map((message, index) => (
-              <div key={index} className={`chat-message ${message.who}`}>
-                {message.who === "bot" && (
-                  <figure className="avatar">
-                    <img
-                      src="./img1.gif"
-                      alt="Assistant Avatar"
-                    />
-                  </figure>
-                )}
-                <div className="message-text">{message.msg}</div>
-              </div>
-            ))}
-            {isTyping && (
-              <div className="chat-message bot loading">
+        <div className="chat-content" ref={messagesEndRef}>
+          {messages.map((message, index) => (
+            <div key={index} className={`chat-message ${message.who}`}>
+              {message.who === "bot" && (
                 <figure className="avatar">
-                  <img
-                    src="./img1.gif"
-                    alt="Assistant Avatar"
-                  />
+                  <img src="./img4.gif" alt="Assistant Avatar" />
                 </figure>
-                <div
-                  style={{
-                    padding: "5px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <lottie-player
-                    src="https://lottie.host/47000d95-a3cd-43b8-ba63-fc7b3216f1cf/6gPsoPB6JM.json"
-                    style={{ width: "130px", height: "130px" }}
-                    loop
-                    autoplay
-                    speed="1"
-                    direction="1"
-                    mode="normal"
-                  ></lottie-player>
-                </div>
+              )}
+              <div className="message-text">{message.msg}</div>
+              {message.who === "me" && (
+                <figure className="user-avatar">
+                  <img src="./img1.gif" alt="User Avatar" />
+                </figure>
+              )}
+            </div>
+          ))}
+          {isTyping && (
+            <div className="chat-message bot loading">
+              <div
+                style={{
+                  padding: "5px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <lottie-player
+                  src="https://lottie.host/47000d95-a3cd-43b8-ba63-fc7b3216f1cf/6gPsoPB6JM.json"
+                  style={{ width: "130px", height: "130px" }}
+                  loop
+                  autoplay
+                  speed="1"
+                  direction="1"
+                  mode="normal"
+                ></lottie-player>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
       <button className="toggle-button" onClick={toggleChatVisibility}>
@@ -168,4 +162,5 @@ const AISecondOpinion = () => {
 };
 
 export default AISecondOpinion;
+
 

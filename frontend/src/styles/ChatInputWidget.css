@@ -94,7 +94,7 @@
  /* Media Queries */
  @media (max-width: 768px) {
      .chat-container {
-         max-width: 90%;
+         max-width: 80%;
          padding: 8px;
      }
  
@@ -111,7 +111,7 @@
  
  @media (max-width: 480px) {
      .chat-container {
-         max-width: 100%;
+         max-width: 90%;
          padding: 5px;
      }
  

@@ -15,7 +15,6 @@
 
 .main-content {
   flex: 3;
-  padding: 20px;
   margin-top: 5%;
   background: #f8f9fa; /* Light neutral background */
   border: 1px solid #ddd; /* Subtle border */
@@ -30,7 +29,6 @@
     border: none;
     box-shadow:none;
     width: 100%;
-    margin: 0px;
     background: #f8f9fa;
   }
 }

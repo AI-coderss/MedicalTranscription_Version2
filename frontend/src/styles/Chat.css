@@ -1,16 +1,13 @@
-/* Chat Content (Scrollable Area) */
-.chat-container{
-  width: 100%;
-}
-
 .chat-content {
-  width: 100%;
+  width: 100%; /* Full width of the viewport */
   height: 660px;
+  margin: 0%;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 1rem 0; /* Adjust padding to avoid extra space */
   border-radius: 16px;
   padding-bottom: 7rem;
   transition: max-height 0.3s ease-in-out;
+
 }
 
 /* Chat Content Scrollbar Styling */
@@ -51,7 +48,7 @@
 .chat-footer {
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 100%; /* Full width of the viewport */
   background: transparent;
   padding: 0rem;
   display: flex;
@@ -102,18 +99,20 @@
 .chat-message {
   display: flex;
   align-items: center;
-  margin: 0.5rem 0;
+  margin: 0.8rem 0;
   animation: fadeIn 0.5s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
 
 .chat-message.bot {
-  margin-left: 0.05rem;
-  margin-right: 1rem;
+  margin-left: 5rem;
+  margin-right: 3rem;
   justify-content: flex-start;
 }
 
 .chat-message.me {
+  margin-left: 0.05rem;
+  margin-right: 5rem;
   justify-content: flex-end;
 }
 
@@ -147,23 +146,40 @@
 }
 
 .chat-message.me .message-text {
-  background:  #007bff;
+  background: #007bff;
   color: #fff;
   border-radius: 10px 10px 0 10px;
 }
 
 /* Avatar Styling */
 .avatar {
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   display: block;
   margin-right: 10px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.24);
+  border: 2px solid rgba(184, 176, 176, 0.1);
   transition: all 0.3s ease-in-out;
 }
-
+/* User Avatar Styling */
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  display: block;
+  margin-left: 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(184, 176, 176, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: all 0.3s ease-in-out;
+}
 .avatar img {
   width: 100%;
   height: 100%;
@@ -207,56 +223,25 @@
 /* Media Queries for Small Devices */
 @media screen and (max-width: 768px) {
   .chat-content {
-    padding: 0.5rem;
-    padding-bottom: 5rem;
-    width: 100%;
+    padding: 0.5rem 0;
+    width: 100vw;
     top: 100px;
   }
 
   .chat-footer {
-    padding: 0.5rem;
-    width: 100%;
-  }
-
-  .message-text {
-    font-size: 0.9rem;
-  }
-
-  .toggle-button {
-    right: 5%;
-    left:-20%;
-  }
-
-  .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    padding: 0.5rem 0;
+    width: 100vw;
   }
 }
 
 @media screen and (max-width: 480px) {
   .chat-content {
-    padding: 0.5rem;
-    padding-bottom: 5rem;
-    width: 100%;
+    padding: 0.5rem 0;
+    width: 100vw;
   }
 
   .chat-footer {
-    padding: 0.5rem;
-    width: 100%;
-  }
-
-  .message-text {
-    font-size: 0.8rem;
-  }
-
-  .toggle-button {
-    right: 10%;
-  }
-
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    padding: 0.5rem 0;
+    width: 100vw;
   }
 }
