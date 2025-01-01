@@ -3,14 +3,20 @@ import useTranscriptStore from "../store/useTranscriptStore";
 import useChatVisibilityStore from "../store/useChatVisibilityStore"; // Import Zustand store for chat visibility
 import ChatInputWidget from "../components/ChatInputWidget";
 import OpenAI from "openai";
+import ReactMarkdown from "react-markdown";
 import "../styles/Chat.css"; // Reuse the Chat styles
 
 const AISecondOpinion = () => {
   const { transcript } = useTranscriptStore();
   const { isChatVisible, setChatVisible } = useChatVisibilityStore(); // Zustand state and toggle function
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    // Load messages from localStorage on initial render
+    const savedMessages = localStorage.getItem("aiSecondOpinionMessages");
+    return savedMessages ? JSON.parse(savedMessages) : [];
+  });
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesStartRef = useRef(null);
 
   const openai = new OpenAI({
     apiKey: "", // Replace with your OpenAI API Key
@@ -23,11 +29,52 @@ const AISecondOpinion = () => {
     }
   };
 
-  useEffect(() => {
-    if (transcript) {
-      processAIResponse(transcript); // Pass transcript directly to AI model
+  const scrollToRevealLastMessage = () => {
+    if (messagesEndRef.current && messagesEndRef.current.previousElementSibling) {
+      messagesEndRef.current.previousElementSibling.scrollIntoView({ behavior: "smooth" });
     }
-  });
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      function () {
+        console.log("Copying to clipboard was successful!");
+        alert("Copied to clipboard!");
+      },
+      function (err) {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  };
+
+  useEffect(() => {
+    // Clear localStorage on first page load
+    const isFirstLoad = sessionStorage.getItem("aiSecondOpinionFirstLoad");
+    if (!isFirstLoad) {
+      localStorage.removeItem("aiSecondOpinionMessages");
+      sessionStorage.setItem("aiSecondOpinionFirstLoad", "true");
+      setMessages([]); // Reset messages state
+    }
+  }, []);
+
+  useEffect(() => {
+    const hasProcessed = sessionStorage.getItem("hasProcessedTranscript");
+    if (transcript && hasProcessed !== "true") {
+      processAIResponse(transcript); // Pass transcript directly to AI model
+      sessionStorage.setItem("hasProcessedTranscript", "true"); // Mark transcript as processed
+    }
+  }, [transcript]);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("aiSecondOpinionMessages", JSON.stringify(messages));
+  }, [messages]);
+
+  useEffect(() => {
+    if (isTyping) {
+      scrollToRevealLastMessage();
+    }
+  }, [isTyping]);
 
   const handleNewMessage = async (userMessage) => {
     const userText = userMessage.text || "";
@@ -114,19 +161,35 @@ const AISecondOpinion = () => {
   return (
     <>
       {isChatVisible && (
-        <div className="chat-content" ref={messagesEndRef}>
+        <div className="chat-content">
+          <div ref={messagesStartRef}></div>
           {messages.map((message, index) => (
             <div key={index} className={`chat-message ${message.who}`}>
               {message.who === "bot" && (
-                <figure className="avatar">
-                  <img src="./img4.gif" alt="Assistant Avatar" />
-                </figure>
+                <>
+                  <figure className="avatar">
+                    <img src="./img4.gif" alt="Assistant Avatar" />
+                  </figure>
+                  <div className="message-text">
+                    {/* Render markdown for structured AI response */}
+                    <ReactMarkdown>{message.msg}</ReactMarkdown>
+                    <span
+                      className="copy-icons"
+                      onClick={() => copyToClipboard(message.msg)}
+                      title="Copy to clipboard"
+                    >
+                      <i className="fas fa-copy"></i>
+                    </span>
+                  </div>
+                </>
               )}
-              <div className="message-text">{message.msg}</div>
               {message.who === "me" && (
-                <figure className="user-avatar">
-                  <img src="./img1.gif" alt="User Avatar" />
-                </figure>
+                <>
+                  <div className="message-text">{message.msg}</div>
+                  <figure className="user-avatar">
+                    <img src="./img1.gif" alt="User Avatar" />
+                  </figure>
+                </>
               )}
             </div>
           ))}
@@ -151,6 +214,7 @@ const AISecondOpinion = () => {
               </div>
             </div>
           )}
+          <div ref={messagesEndRef}></div>
         </div>
       )}
       <button className="toggle-button" onClick={toggleChatVisibility}>
@@ -162,5 +226,13 @@ const AISecondOpinion = () => {
 };
 
 export default AISecondOpinion;
+
+
+
+
+
+
+
+
 
 

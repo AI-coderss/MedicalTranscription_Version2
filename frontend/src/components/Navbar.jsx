@@ -83,7 +83,7 @@ const Navbar = () => {
       ) : (
         // Desktop View: Standard Navbar
         <div className="navItemContainer">
-          {["Home 🏠", "Follow-up Visit 🩺", "AI Second Opinion"].map(
+          {["Home 🏠", "Follow-up Visit 🩺", "AI Second Opinion 👨‍⚕️"].map(
             (label, index) => (
               <Link
                 to={

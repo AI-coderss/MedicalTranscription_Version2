@@ -107,9 +107,9 @@
 .chat-message.bot {
   margin-left: 5rem;
   margin-right: 3rem;
+  padding: 1rem;
   justify-content: flex-start;
 }
-
 .chat-message.me {
   margin-left: 0.05rem;
   margin-right: 5rem;
@@ -188,18 +188,18 @@
   transition: all 0.3s ease-in-out;
 }
 
-.chat-message:hover .avatar {
-  transform: scale(1.2);
-  margin-right: 10px;
-  border-radius: 50%;
+.copy-icons {
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-left: 10px;
+  color: #007bff;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
 }
 
-.chat-message:hover .message-text::before {
-  content: "";
-  display: inline-block;
-  margin-right: 5px;
-  opacity: 0.7;
-  font-size: 1.2rem;
+.copy-icons:hover {
+  color: #0056b3;
 }
 
 /* Loading Animation */
