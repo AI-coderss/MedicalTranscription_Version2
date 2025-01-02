@@ -8,12 +8,12 @@
      justify-content: space-between;
      align-items: center;
      box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
-     width: 90%;
+     width: 91%;
      max-width: 600px;
      position: fixed; /* Ensure it's fixed at the bottom */
      bottom: 25px;
      left: 50%;
-     transform: translateX(-50%);
+     transform: translateX(-90%);
      z-index: 1000;
      border: none; /* Remove white border */
  }

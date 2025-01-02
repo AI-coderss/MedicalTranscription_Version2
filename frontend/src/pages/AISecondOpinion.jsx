@@ -4,13 +4,13 @@ import useChatVisibilityStore from "../store/useChatVisibilityStore"; // Import 
 import ChatInputWidget from "../components/ChatInputWidget";
 import OpenAI from "openai";
 import ReactMarkdown from "react-markdown";
+import PDFDownloader from "../components/PdfDownloader";
 import "../styles/Chat.css"; // Reuse the Chat styles
 
 const AISecondOpinion = () => {
-  const { transcript } = useTranscriptStore();
+  const { transcript, setTranscript } = useTranscriptStore(); // Zustand store now has `setTranscript`
   const { isChatVisible, setChatVisible } = useChatVisibilityStore(); // Zustand state and toggle function
   const [messages, setMessages] = useState(() => {
-    // Load messages from localStorage on initial render
     const savedMessages = localStorage.getItem("aiSecondOpinionMessages");
     return savedMessages ? JSON.parse(savedMessages) : [];
   });
@@ -37,18 +37,12 @@ const AISecondOpinion = () => {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(
-      function () {
-        console.log("Copying to clipboard was successful!");
-        alert("Copied to clipboard!");
-      },
-      function (err) {
-        console.error("Could not copy text: ", err);
-      }
+      () => alert("Copied to clipboard!"),
+      (err) => console.error("Could not copy text: ", err)
     );
   };
 
   useEffect(() => {
-    // Clear localStorage on first page load
     const isFirstLoad = sessionStorage.getItem("aiSecondOpinionFirstLoad");
     if (!isFirstLoad) {
       localStorage.removeItem("aiSecondOpinionMessages");
@@ -57,15 +51,15 @@ const AISecondOpinion = () => {
     }
   }, []);
 
+  // Update transcript handling
   useEffect(() => {
-    const hasProcessed = sessionStorage.getItem("hasProcessedTranscript");
-    if (transcript && hasProcessed !== "true") {
-      processAIResponse(transcript); // Pass transcript directly to AI model
-      sessionStorage.setItem("hasProcessedTranscript", "true"); // Mark transcript as processed
+    if (transcript) {
+      setMessages([]); // Clear previous messages for the new session
+      setTranscript(null); // Clear the transcript in the store to avoid re-triggering
+      processAIResponse(transcript); // Process the new transcript
     }
-  }, [transcript]);
+  }, [transcript, setTranscript]);
 
-  // Save messages to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("aiSecondOpinionMessages", JSON.stringify(messages));
   }, [messages]);
@@ -97,11 +91,11 @@ const AISecondOpinion = () => {
                           Based on the user's input, provide a helpful and detailed response your answers must be always in English only in English 
                           regardless of the user's input language.
                           follow the following format :
-                          The diagnosis : 
-                          The recommended lab test and investigation: list them 
-                          Drug prescriptions: prescribe the appropriate drugs based on the diagnosis
-                          Recommendations to The Doctor: recommend the doctor with regards to case what they supposed to do ?
-                          Treatment plan : set the appropriate treatment plan for the doctor including the steps to treat the Patient
+                          **The diagnosis** : 
+                          **The recommended lab test and investigation**: list them 
+                          **Drug prescriptions**: prescribe the appropriate drugs based on the diagnosis
+                          **Recommendations to The Doctor**: recommend the doctor with regards to case what they supposed to do ?
+                          **Treatment plan** : set the appropriate treatment plan for the doctor including the steps to treat the Patient
                           Please strictly adhere to the above format wherever asked , be more specific and detailed in your answers `;
 
     try {
@@ -170,15 +164,20 @@ const AISecondOpinion = () => {
                     <img src="./img4.gif" alt="Assistant Avatar" />
                   </figure>
                   <div className="message-text">
-                    {/* Render markdown for structured AI response */}
                     <ReactMarkdown>{message.msg}</ReactMarkdown>
-                    <span
-                      className="copy-icons"
-                      onClick={() => copyToClipboard(message.msg)}
-                      title="Copy to clipboard"
-                    >
-                      <i className="fas fa-copy"></i>
-                    </span>
+                    <div className="message-actions">
+                      <PDFDownloader
+                        content={message.msg}
+                        fileName={`AI_Response_${index + 1}.pdf`}
+                      />
+                      <span
+                        className="copy-icons"
+                        onClick={() => copyToClipboard(message.msg)}
+                        title="Copy to clipboard"
+                      >
+                        <i className="fas fa-copy"></i>
+                      </span>
+                    </div>
                   </div>
                 </>
               )}
@@ -225,6 +224,7 @@ const AISecondOpinion = () => {
 };
 
 export default AISecondOpinion;
+
 
 
 

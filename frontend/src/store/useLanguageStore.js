@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 
 const useLanguageStore = create((set) => ({
-  selectedLanguage: "en-US", // Default language
+  selectedLanguage: "en-GB", // Default language
   setSelectedLanguage: (language) => set({ selectedLanguage: language }),
 }));
 

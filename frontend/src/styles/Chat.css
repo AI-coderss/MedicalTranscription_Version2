@@ -47,13 +47,24 @@
 .chat-footer {
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 60%; /* Adjust the width to your preference */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Correct centering alignment */
   background: transparent;
-  padding: 0rem;
-  margin: 0%;
+  padding: 0.5rem;
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
   z-index: 10;
   border-radius: 0 0 16px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chat-message.bot .message-text {
+  background: white;
+  color: black;
+  border-radius: 10px 10px 10px 0;
+  position: relative; /* Make message-text the positioning context */
+  padding-right: 40px; /* Add padding to make space for the icon */
 }
 
 .chat-message .copy-icons {
@@ -62,7 +73,7 @@
   right: 10px;
   cursor: pointer;
   font-size: 16px;
-  color: #555;
+  color: #aaa8a8;
   transition: color 0.3s ease;
 }
 
@@ -72,14 +83,14 @@
 
 /* Toggle Button */
 .toggle-button {
-  position: fixed;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 40px;
   width: 40px;
   border: none;
-  right: 70%;
+  right: 82%;
   margin-bottom: 18px;
   border-radius: 50%;
   transform: translateX(100%);
@@ -129,7 +140,6 @@
   left: -100px; /* Position avatar at the top-left corner */
   transform: translateY(-50%);
 }
-
 .chat-message.me {
   position: relative;
   margin-left: 0.05rem;
@@ -197,6 +207,22 @@
   transition: all 0.3s ease-in-out;
 }
 
+
+
+.message-actions a {
+  color: #007bff;
+}
+.message-actions .pdf-download-link:hover {
+  padding: 0.8rem 1.5rem; /* Default padding for larger screens */
+  font-size: 1rem; /* Default font size */
+  color: white;
+  background: whitesmoke; /* Gradient background */
+  border: none;
+  border-radius: 6px; /* Slightly smaller radius */
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease; /* Smooth transitions */
+}
 /* Loading Animation */
 .loading span {
   font-size: 0.9rem;

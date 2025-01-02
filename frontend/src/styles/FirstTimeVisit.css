@@ -82,7 +82,8 @@ textarea:focus {
   align-items: center;
   cursor: pointer;
   font-size: 0.9rem;
-  color: #007bff; /* Blue color for icon and label */
+  transform: translateX(150%);
+  color: #aaa8a8;; /* Blue color for icon and label */
   transition: color 0.3s ease;
 }
 
