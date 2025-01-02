@@ -75,9 +75,9 @@ const Loader = ({ isLoading }) => {
           <div className="animated-text__letter">i</div>
           <div className="animated-text__letter">n</div>
           <div className="animated-text__letter">g</div>
-          <div className="animated-text__letter">.</div>
-          <div className="animated-text__letter">.</div>
-          <div className="animated-text__letter">.</div>
+          <div className="animated-text__letter">⚈</div>
+          <div className="animated-text__letter">⚈</div>
+          <div className="animated-text__letter">⚈</div>
         </div>
       </div>
     </div>

@@ -1,66 +1,93 @@
 import React from 'react';
-import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
+import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 // Define styles for the PDF document
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
-  },
-  text: {
+    padding: 25,
     fontSize: 12,
-    marginBottom: 10,
+    lineHeight: 1.6,
+  },
+  header: {
+    fontSize: 14,
+    marginBottom: 7,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   bold: {
     fontWeight: 'bold',
   },
+  section: {
+    marginBottom: 8,
+  },
   listItem: {
-    marginLeft: 10,
+    marginLeft: 15,
     marginBottom: 5,
+  },
+  footer: {
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 10,
+    color: '#666',
   },
 });
 
-// Helper function to parse and render markdown-like text
-const renderContent = (text) => {
-  const lines = text.split('\n');
-  return lines.map((line, index) => {
-    if (line.startsWith('**') && line.endsWith('**')) {
-      // Bold text
+// Helper function to render markdown-like text with bold formatting
+const renderMarkdown = (line) => {
+  const regex = /(\*\*.*?\*\*)|([^*]+)/g; // Matches **bold** and regular text
+  const parts = line.match(regex) || []; // Ensure parts is an array
+
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <Text key={index} style={[styles.text, styles.bold]}>
-          {line.slice(2, -2)}
-        </Text>
-      );
-    } else if (line.startsWith('- ')) {
-      // List item
-      return (
-        <Text key={index} style={[styles.text, styles.listItem]}>
-          • {line.slice(2)}
-        </Text>
-      );
-    } else {
-      // Regular text
-      return (
-        <Text key={index} style={styles.text}>
-          {line}
+        <Text key={index} style={styles.bold}>
+          {part.slice(2, -2)} {/* Remove the ** markers */}
         </Text>
       );
     }
+    return <Text key={index}>{part}</Text>; // Render regular text
+  });
+};
+
+// Helper function to parse and render lines
+const renderContent = (text) => {
+  const lines = text.split('\n');
+  return lines.map((line, index) => {
+    if (line.startsWith('- ')) {
+      // Handle list items
+      return (
+        <Text key={index} style={styles.listItem}>
+          • {renderMarkdown(line.slice(2))}
+        </Text>
+      );
+    }
+    return (
+      <Text key={index} style={styles.section}>
+        {renderMarkdown(line)}
+      </Text>
+    );
   });
 };
 
 const PDFDownloader = ({ content, fileName }) => (
-  <PDFDownloadLink className='pdf-download-link'
+  <PDFDownloadLink
+    className="pdf-download-link"
     document={
       <Document>
-        <Page style={styles.page}>{renderContent(content)}</Page>
+        <Page style={styles.page}>
+          <Text className='header' style={styles.header}>AI Second Opinion</Text>
+          <View>{renderContent(content)}</View>
+          <Text style={styles.footer}>
+            Thank you for using our service. Generated on {new Date().toLocaleDateString()}.
+          </Text>
+        </Page>
       </Document>
     }
     fileName={fileName}
     style={{
       textDecoration: 'none',
       color: '#007bff',
-      fontSize: '0.8rem',
-      marginRight: '10px',
+      fontSize: '0.9rem',
     }}
   >
     Download PDF ⬇️
@@ -68,3 +95,7 @@ const PDFDownloader = ({ content, fileName }) => (
 );
 
 export default PDFDownloader;
+
+
+
+
