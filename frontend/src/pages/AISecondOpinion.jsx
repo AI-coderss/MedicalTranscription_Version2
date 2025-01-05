@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import useTranscriptStore from "../store/useTranscriptStore";
-import useChatVisibilityStore from "../store/useChatVisibilityStore"; // Import Zustand store for chat visibility
+import useChatVisibilityStore from "../store/useChatVisibilityStore"; 
 import ChatInputWidget from "../components/ChatInputWidget";
 import OpenAI from "openai";
 import ReactMarkdown from "react-markdown";
 import PDFDownloader from "../components/PdfDownloader";
-import "../styles/Chat.css"; // Reuse the Chat styles
+import AudioPlayer from "../components/AudioPlayer"; 
+import "../styles/Chat.css"; 
 
 const AISecondOpinion = () => {
-  const { transcript, setTranscript } = useTranscriptStore(); // Zustand store now has `setTranscript`
-  const { isChatVisible, setChatVisible } = useChatVisibilityStore(); // Zustand state and toggle function
+  const { transcript, setTranscript } = useTranscriptStore(); 
+  const { isChatVisible, setChatVisible } = useChatVisibilityStore(); 
   const [messages, setMessages] = useState(() => {
     const savedMessages = localStorage.getItem("aiSecondOpinionMessages");
     return savedMessages ? JSON.parse(savedMessages) : [];
@@ -19,7 +20,7 @@ const AISecondOpinion = () => {
   const messagesStartRef = useRef(null);
 
   const openai = new OpenAI({
-    apiKey: "", // Replace with your OpenAI API Key
+    apiKey: process.env.REACT_APP_OPENAI_API_KEY, 
     dangerouslyAllowBrowser: true,
   });
 
@@ -47,16 +48,15 @@ const AISecondOpinion = () => {
     if (!isFirstLoad) {
       localStorage.removeItem("aiSecondOpinionMessages");
       sessionStorage.setItem("aiSecondOpinionFirstLoad", "true");
-      setMessages([]); // Reset messages state
+      setMessages([]); 
     }
   }, []);
 
-  // Update transcript handling
   useEffect(() => {
     if (transcript) {
-      setMessages([]); // Clear previous messages for the new session
-      setTranscript(null); // Clear the transcript in the store to avoid re-triggering
-      processAIResponse(transcript); // Process the new transcript
+      setMessages([]); 
+      setTranscript(null); 
+      processAIResponse(transcript); 
     }
   }, [transcript, setTranscript]);
 
@@ -78,7 +78,7 @@ const AISecondOpinion = () => {
       { msg: userText, who: "me" },
     ]);
 
-    setChatVisible(true); // Show chat content when a new message is sent
+    setChatVisible(true); 
     await processAIResponse(userText);
   };
 
@@ -86,18 +86,12 @@ const AISecondOpinion = () => {
     setIsTyping(true);
 
     const promptTemplate = `You are a doctor AI assistant. Your main task is to provide medical diagnosis, recommend lab tests and investigations,
-                          and prescribe the appropriate drugs based on the user's input reply in English only.
-                          User's input
-                          Based on the user's input, provide a helpful and detailed response your answers must be always in English only in English 
-                          regardless of the user's input language.
-                          follow the following format :
-                          **The diagnosis** : 
-                          **The recommended lab test and investigation**: list them 
-                          **Drug prescriptions**: prescribe the appropriate drugs based on the diagnosis
-                          **Recommendations to The Doctor**: recommend the doctor with regards to case what they supposed to do ?
-                          **Treatment plan** : set the appropriate treatment plan for the doctor including the steps to treat the Patient
-                          Please strictly adhere to the above format wherever asked , be more specific and detailed in your answers `;
-
+                            and prescribe the appropriate drugs based on the user's input reply in English only.
+                            **The diagnosis** : 
+                            **The recommended lab test and investigation**: list them 
+                            **Drug prescriptions**: prescribe the appropriate drugs based on the diagnosis
+                            **Recommendations to The Doctor**: recommend the doctor with regards to case what they supposed to do ?
+                            **Treatment plan** : set the appropriate treatment plan for the doctor including the steps to treat the Patient`;
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -148,7 +142,7 @@ const AISecondOpinion = () => {
   };
 
   const toggleChatVisibility = () => {
-    setChatVisible(!isChatVisible); // Use Zustand function to toggle visibility
+    setChatVisible(!isChatVisible); 
   };
 
   return (
@@ -177,6 +171,10 @@ const AISecondOpinion = () => {
                       >
                         <i className="fas fa-copy"></i>
                       </span>
+                      {/* Moved the AudioPlayer to the bottom-right */}
+                      <div className="audio-player-bottom-right">
+                        <AudioPlayer text={message.msg} />
+                      </div>
                     </div>
                   </div>
                 </>
@@ -224,6 +222,7 @@ const AISecondOpinion = () => {
 };
 
 export default AISecondOpinion;
+
 
 
 

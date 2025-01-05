@@ -1,12 +1,13 @@
 import React from 'react';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { FaDownload } from 'react-icons/fa'; // Import Font Awesome download icon
 
 // Define styles for the PDF document
 const styles = StyleSheet.create({
   page: {
     padding: 25,
     fontSize: 12,
-    lineHeight: 1.6,
+    lineHeight: 1.4,
   },
   header: {
     fontSize: 14,
@@ -88,13 +89,17 @@ const PDFDownloader = ({ content, fileName }) => (
       textDecoration: 'none',
       color: '#007bff',
       fontSize: '0.9rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem'  // Adding spacing between icon and text
     }}
   >
-    Download PDF ⬇️
+    <FaDownload /> Download PDF
   </PDFDownloadLink>
 );
 
 export default PDFDownloader;
+
 
 
 

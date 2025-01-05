@@ -107,7 +107,7 @@ const ChatInputWidget = ({ onSendMessage }) => {
       }
 
       textAreaRef.current.style.height = "20px"; // Reset to ensure proper recalculation
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight / 4}px`; // Adjust based on content
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight/4}px`; // Adjust based on content
     }
   };
 

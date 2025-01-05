@@ -17,7 +17,7 @@
   .animated-text__letter {
     margin-top: 40px;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 400;
     letter-spacing: 4px;
     text-transform: uppercase;
     font-family: "Audiowide", sans-serif;

@@ -47,7 +47,7 @@
 .chat-footer {
   position: fixed;
   bottom: 0;
-  width: 60%; /* Adjust the width to your preference */
+  width: 60%;/* Adjust the width to your preference */
   left: 50%; /* Center horizontally */
   transform: translateX(-50%); /* Correct centering alignment */
   background: transparent;
@@ -128,7 +128,7 @@
 
 .chat-message.bot {
   position: relative;
-  margin-left: 5rem;
+  margin-left: 15rem;
   margin-right: 3rem;
   padding: 1rem;
   justify-content: flex-start;
@@ -143,7 +143,8 @@
 .chat-message.me {
   position: relative;
   margin-left: 0.05rem;
-  margin-right: 5rem;
+  margin-right: 15rem;
+  padding: 1.5rem;
   justify-content: flex-end;
 }
 
@@ -202,6 +203,9 @@
 .avatar{
   margin-top: 50px;
 }
+.user-avatar {
+  margin-top: 50px;
+}
 .avatar img, .user-avatar img {
   width: 100%;
   height: 100%;
@@ -215,16 +219,17 @@
 .message-actions a {
   color: #007bff;
 }
-.message-actions .pdf-download-link:hover {
-  padding: 0.8rem 1.5rem; /* Default padding for larger screens */
-  font-size: 1rem; /* Default font size */
-  color: white;
-  background: whitesmoke; /* Gradient background */
-  border: none;
-  border-radius: 6px; /* Slightly smaller radius */
+.audio-player-bottom-right {
+  position: absolute;
+  bottom: 10px;
+  right: 35px;
   cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease; /* Smooth transitions */
+  z-index: 10;
+  font-size: 1.2rem;
+  color: #007bff;
+}
+.audio-player-bottom-right:hover {
+  color: #007bff !important;
 }
 /* Loading Animation */
 .loading span {
