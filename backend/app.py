@@ -11,7 +11,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3001","http://localhost:3000","https://medicaltranscription-version-test.onrender.com"])
+CORS(app, origins=["http://localhost:3001","http://localhost:3000","https://medicaltranscription-version2-tests.onrender.com"])
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = openai
 

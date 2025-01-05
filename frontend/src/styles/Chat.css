@@ -6,6 +6,7 @@
   padding: 1rem 0; /* Adjust padding to avoid extra space */
   border-radius: 16px;
   padding-bottom: 7rem;
+  z-index: 9;
   transition: max-height 0.3s ease-in-out;
 }
 
@@ -47,18 +48,19 @@
 .chat-footer {
   position: fixed;
   bottom: 0;
-  width: 60%;/* Adjust the width to your preference */
+  width: 100%; /* Adjust the width to your preference */
   left: 50%; /* Center horizontally */
   transform: translateX(-50%); /* Correct centering alignment */
-  background: transparent;
+  background: rgba(0, 0, 0, 0); /* Fully transparent */
   padding: 0.5rem;
-  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: none; /* Removed shadow for complete transparency */
   z-index: 10;
   border-radius: 0 0 16px 16px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .chat-message.bot .message-text {
   background: white;
   color: black;

@@ -86,10 +86,12 @@ const AISecondOpinion = () => {
     setIsTyping(true);
 
     const promptTemplate = `You are a doctor AI assistant. Your main task is to provide medical diagnosis, recommend lab tests and investigations,
-                            and prescribe the appropriate drugs based on the user's input reply in English only.
+                            and prescribe the appropriate drugs based on the user's input reply in English only , You must reply in English regardless of the input Transcript language.
                             **The diagnosis** : 
+                            **Differential diagnosis**:
                             **The recommended lab test and investigation**: list them 
                             **Drug prescriptions**: prescribe the appropriate drugs based on the diagnosis
+                            **Prognosis** :
                             **Recommendations to The Doctor**: recommend the doctor with regards to case what they supposed to do ?
                             **Treatment plan** : set the appropriate treatment plan for the doctor including the steps to treat the Patient`;
     try {
