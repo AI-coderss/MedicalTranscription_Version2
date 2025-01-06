@@ -13,6 +13,7 @@ const AudioPlayer = ({ text }) => {
 
     // ✅ Memoized audio generation with useCallback
     const fetchAudio = useCallback(async () => {
+        setAudioReady(false);  // Reset audio readiness state
         try {
             const response = await axios.post('https://api.openai.com/v1/audio/speech', {
                 model: 'tts-1',
@@ -29,7 +30,11 @@ const AudioPlayer = ({ text }) => {
             const audioBlob = new Blob([response.data], { type: 'audio/mp3' });
             const url = URL.createObjectURL(audioBlob);
             audioRef.current.src = url;
-            setAudioReady(true);  // ✅ Icon only shows when audio is ready
+
+            // ✅ Delay icon appearance for 5 seconds assuming audio is ready
+            setTimeout(() => {
+                setAudioReady(true);
+            }, 12000);  // Delay icon appearance after 12 seconds
         } catch (error) {
             console.error('Error generating audio:', error);
         }
@@ -54,7 +59,7 @@ const AudioPlayer = ({ text }) => {
         } else {
             audioRef.current.play();
             currentAudioRef = audioRef.current; 
-            setCurrentAudioState = setIsPlaying; // ✅ Track the current playing audio state
+            setCurrentAudioState = setIsPlaying; 
             setIsPlaying(true);
         }
 
@@ -72,7 +77,7 @@ const AudioPlayer = ({ text }) => {
                 transition: 'color 0.3s ease-in-out'
             }}
         >
-            {/* ✅ Only render the icon when the audio is ready */}
+            {/* ✅ Audio icon appears only after 5 seconds */}
             {audioReady && (
                 isPlaying ? (
                     <AiOutlinePlayCircle
@@ -93,6 +98,7 @@ const AudioPlayer = ({ text }) => {
 };
 
 export default AudioPlayer;
+
 
 
 
