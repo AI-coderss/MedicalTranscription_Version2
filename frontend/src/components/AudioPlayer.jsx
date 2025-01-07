@@ -27,7 +27,7 @@ const AudioPlayer = ({ text }) => {
             return;
         }
 
-        const storedAudio = localStorage.getItem(`audio_${text}`);
+        const storedAudio = sessionStorage.getItem(`audio_${text}`);
         if (storedAudio) {
             audioRef.current.src = storedAudio;
             audioRef.current.play();
@@ -53,7 +53,7 @@ const AudioPlayer = ({ text }) => {
 
             const audioBlob = new Blob([response.data], { type: 'audio/mp3' });
             const url = URL.createObjectURL(audioBlob);
-            localStorage.setItem(`audio_${text}`, url);
+            sessionStorage.setItem(`audio_${text}`, url);
             audioRef.current.src = url;
             setIsLoading(false);
 
@@ -89,7 +89,7 @@ const AudioPlayer = ({ text }) => {
                         style={{ color: 'gray' }}
                     />
                     <Player
-                        src={`${process.env.PUBLIC_URL}/loading1.json`}
+                        src={`${process.env.PUBLIC_URL}/loading.json`}
                         loop
                         autoplay
                         style={{ width: 30, height: 30, marginLeft: '10px' }}
@@ -109,6 +109,7 @@ const AudioPlayer = ({ text }) => {
 };
 
 export default AudioPlayer;
+
 
 
 
