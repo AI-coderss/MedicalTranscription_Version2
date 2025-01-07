@@ -87,13 +87,16 @@
 /* Responsive styles for smaller screens */
 @media (max-width: 700px) {
   .animated-text__letter {
-    font-size: 50px;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
 @media (max-width: 340px) {
   .animated-text__letter {
-    font-size: 40px;
+    font-size: 10px;
   }
 }
   

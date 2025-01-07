@@ -20,15 +20,12 @@ const Loader = ({ isLoading }) => {
 
   const containerStyle = isMobile
     ? {
-        width: '180px',
-        height: '180px',
+        width: '100px',
+        height: '100px',
         display: 'flex',
         justifyContent: 'flex-end',
         alignItems: 'center',
         position: 'fixed',
-        top: '35%',
-        right: '0px',
-        transform: 'translateY(-50%)',
       }
     : {
         width: '200px',
@@ -41,8 +38,9 @@ const Loader = ({ isLoading }) => {
 
   const playerStyle = isMobile
     ? {
-        width: '45%',
-        height: '45%',
+        width: '50%',
+        marginTop: '50px',
+        height: '50%',
         background: 'none',
       }
     : {

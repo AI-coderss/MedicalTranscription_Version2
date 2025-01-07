@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { AiFillSound, AiOutlinePlayCircle } from 'react-icons/ai';
 import axios from 'axios';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 // ✅ Global reference to keep track of the currently playing audio and its state
 let currentAudioRef = null;
@@ -8,12 +9,35 @@ let setCurrentAudioState = null;
 
 const AudioPlayer = ({ text }) => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [audioReady, setAudioReady] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false); 
     const audioRef = useRef(new Audio());
 
-    // ✅ Memoized audio generation with useCallback
-    const fetchAudio = useCallback(async () => {
-        setAudioReady(false);  // Reset audio readiness state
+    const toggleAudio = async () => {
+        // ✅ Prevent multiple audios from playing at once
+        if (currentAudioRef && currentAudioRef !== audioRef.current) {
+            currentAudioRef.pause();
+            currentAudioRef.currentTime = 0;
+            if (setCurrentAudioState) setCurrentAudioState(false);
+        }
+
+        if (isPlaying) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            setIsPlaying(false);
+            return;
+        }
+
+        const storedAudio = localStorage.getItem(`audio_${text}`);
+        if (storedAudio) {
+            audioRef.current.src = storedAudio;
+            audioRef.current.play();
+            currentAudioRef = audioRef.current;
+            setCurrentAudioState = setIsPlaying;
+            setIsPlaying(true);
+            return;
+        }
+
+        setIsLoading(true); // Show loader when generating audio
         try {
             const response = await axios.post('https://api.openai.com/v1/audio/speech', {
                 model: 'tts-1',
@@ -29,75 +53,67 @@ const AudioPlayer = ({ text }) => {
 
             const audioBlob = new Blob([response.data], { type: 'audio/mp3' });
             const url = URL.createObjectURL(audioBlob);
+            localStorage.setItem(`audio_${text}`, url);
             audioRef.current.src = url;
+            setIsLoading(false);
 
-            // ✅ Delay icon appearance for 5 seconds assuming audio is ready
-            setTimeout(() => {
-                setAudioReady(true);
-            }, 12000);  // Delay icon appearance after 12 seconds
+            audioRef.current.play();
+            currentAudioRef = audioRef.current;
+            setCurrentAudioState = setIsPlaying;
+            setIsPlaying(true);
+
+            audioRef.current.onended = () => {
+                setIsPlaying(false);
+            };
         } catch (error) {
             console.error('Error generating audio:', error);
+            setIsLoading(false); 
         }
-    }, [text]);
-
-    useEffect(() => {
-        fetchAudio();
-    }, [fetchAudio]);
-
-    const toggleAudio = () => {
-        // ✅ Stop the currently playing audio and reset its state
-        if (currentAudioRef && currentAudioRef !== audioRef.current) {
-            currentAudioRef.pause();
-            currentAudioRef.currentTime = 0;
-            if (setCurrentAudioState) setCurrentAudioState(false); // Reset the icon color and state of the previous audio
-        }
-
-        if (isPlaying) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-            setIsPlaying(false);
-        } else {
-            audioRef.current.play();
-            currentAudioRef = audioRef.current; 
-            setCurrentAudioState = setIsPlaying; 
-            setIsPlaying(true);
-        }
-
-        audioRef.current.onended = () => {
-            setIsPlaying(false);
-        };
     };
 
     return (
-        <div 
-            style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                cursor: 'pointer',
-                transition: 'color 0.3s ease-in-out'
-            }}
-        >
-            {/* ✅ Audio icon appears only after 5 seconds */}
-            {audioReady && (
-                isPlaying ? (
-                    <AiOutlinePlayCircle
-                        onClick={toggleAudio} 
-                        size={24} 
-                        style={{ color: '#007bff' }} 
-                    />
-                ) : (
+        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            {/* Show the first icon until audio plays */}
+            {(!isPlaying && !isLoading) && (
+                <AiFillSound 
+                    onClick={toggleAudio} 
+                    size={24} 
+                    style={{ color: 'gray' }}
+                />
+            )}
+            {/* Loader and first icon during loading */}
+            {isLoading && (
+                <>
                     <AiFillSound 
-                        onClick={toggleAudio} 
                         size={24} 
-                        style={{ color: 'gray' }} 
+                        style={{ color: 'gray' }}
                     />
-                )
+                    <Player
+                        src={`${process.env.PUBLIC_URL}/loading1.json`}
+                        loop
+                        autoplay
+                        style={{ width: 30, height: 30, marginLeft: '10px' }}
+                    />
+                </>
+            )}
+            {/* Show play icon only when audio is playing */}
+            {isPlaying && (
+                <AiOutlinePlayCircle 
+                    onClick={toggleAudio} 
+                    size={24} 
+                    style={{ color: '#007bff' }}
+                />
             )}
         </div>
     );
 };
 
 export default AudioPlayer;
+
+
+
+
+
 
 
 
