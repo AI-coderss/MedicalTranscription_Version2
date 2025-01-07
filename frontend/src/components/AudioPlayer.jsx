@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState} from 'react';
 import { AiFillSound, AiOutlinePlayCircle } from 'react-icons/ai';
 import axios from 'axios';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { Howl } from 'howler';
 
 // ✅ Global reference to keep track of the currently playing audio and its state
 let currentAudioRef = null;
@@ -10,31 +11,33 @@ let setCurrentAudioState = null;
 const AudioPlayer = ({ text }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoading, setIsLoading] = useState(false); 
-    const audioRef = useRef(new Audio());
 
     const toggleAudio = async () => {
         // ✅ Prevent multiple audios from playing at once
-        if (currentAudioRef && currentAudioRef !== audioRef.current) {
-            currentAudioRef.pause();
-            currentAudioRef.currentTime = 0;
+        if (currentAudioRef) {
+            currentAudioRef.stop();
             if (setCurrentAudioState) setCurrentAudioState(false);
         }
 
         if (isPlaying) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
+            currentAudioRef.stop();
             setIsPlaying(false);
             return;
         }
 
         const storedAudio = sessionStorage.getItem(`audio_${text}`);
         if (storedAudio) {
-            audioRef.current.src = storedAudio;
-            audioRef.current.play();
-            currentAudioRef = audioRef.current;
-            setCurrentAudioState = setIsPlaying;
-            setIsPlaying(true);
-            return;
+            try {
+                const sound = new Howl({ src: [storedAudio], format: ['mp3'] });
+                sound.play();
+                currentAudioRef = sound;
+                setCurrentAudioState = setIsPlaying;
+                setIsPlaying(true);
+                sound.on('end', () => setIsPlaying(false));
+                return;
+            } catch (error) {
+                console.warn('Stored audio source invalid, regenerating audio.');
+            }
         }
 
         setIsLoading(true); // Show loader when generating audio
@@ -54,17 +57,15 @@ const AudioPlayer = ({ text }) => {
             const audioBlob = new Blob([response.data], { type: 'audio/mp3' });
             const url = URL.createObjectURL(audioBlob);
             sessionStorage.setItem(`audio_${text}`, url);
-            audioRef.current.src = url;
+            const sound = new Howl({ src: [url], format: ['mp3'] });
+            sound.play();
             setIsLoading(false);
 
-            audioRef.current.play();
-            currentAudioRef = audioRef.current;
+            currentAudioRef = sound;
             setCurrentAudioState = setIsPlaying;
             setIsPlaying(true);
 
-            audioRef.current.onended = () => {
-                setIsPlaying(false);
-            };
+            sound.on('end', () => setIsPlaying(false));
         } catch (error) {
             console.error('Error generating audio:', error);
             setIsLoading(false); 
@@ -89,7 +90,7 @@ const AudioPlayer = ({ text }) => {
                         style={{ color: 'gray' }}
                     />
                     <Player
-                        src={`${process.env.PUBLIC_URL}/loading1.json`}
+                        src={`${process.env.PUBLIC_URL}/loading.json`}
                         loop
                         autoplay
                         style={{ width: 30, height: 30, marginLeft: '10px' }}
@@ -109,6 +110,7 @@ const AudioPlayer = ({ text }) => {
 };
 
 export default AudioPlayer;
+
 
 
 
