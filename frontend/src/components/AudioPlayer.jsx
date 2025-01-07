@@ -90,10 +90,10 @@ const AudioPlayer = ({ text }) => {
                         style={{ color: 'gray' }}
                     />
                     <Player
-                        src={`${process.env.PUBLIC_URL}/loading.json`}
+                        src={`${process.env.PUBLIC_URL}/loading1.json`}
                         loop
                         autoplay
-                        style={{ width: 30, height: 30, marginLeft: '10px' }}
+                        style={{ width: 40, height: 40, marginLeft: '10px' }}
                     />
                 </>
             )}
