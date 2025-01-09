@@ -99,18 +99,14 @@ const ChatInputWidget = ({ onSendMessage }) => {
     }
   };
 
-  const adjustTextAreaHeight = (reset = false) => {
+  const adjustTextAreaHeight = (reset= false) => {
     if (textAreaRef.current) {
-      if (reset) {
-        textAreaRef.current.style.height = "25px"; // Reset to default height
-        return;
+      textAreaRef.current.style.height = "auto"; // Reset to auto first
+      if (!reset) {
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight*2/3}px`; // Adjust to content
       }
-
-      textAreaRef.current.style.height = "20px"; // Reset to ensure proper recalculation
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight/4}px`; // Adjust based on content
     }
   };
-
   useEffect(() => {
     adjustTextAreaHeight(); // Ensure correct initial height
   }, []);
