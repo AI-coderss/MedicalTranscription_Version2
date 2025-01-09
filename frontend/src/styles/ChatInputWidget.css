@@ -34,7 +34,7 @@
      resize: none; /* Disable manual resizing */
      overflow: hidden; /* Smooth height adjustment */
      line-height: 1.4;
-     min-height: 28px; /* Minimum height */
+     min-height: 20px; /* Minimum height */
      transition: height 0.2s ease; /* Smooth transition */
  }
  
