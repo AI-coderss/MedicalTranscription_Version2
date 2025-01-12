@@ -94,8 +94,8 @@
  /* Media Queries */
  @media (max-width: 768px) {
      .chat-container {
-         max-width: 80%;
-         padding: 8px;
+         width: 75%;
+         margin-left: 40%;
      }
  
      .chat-input {

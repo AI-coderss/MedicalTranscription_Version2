@@ -48,16 +48,16 @@
 .chat-footer {
   position: fixed;
   bottom: 0;
-  width: 100%; /* Adjust the width to your preference */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Correct centering alignment */
-  background: rgba(0, 0, 0, 0); /* Fully transparent */
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0);
   padding: 0.5rem;
-  box-shadow: none; /* Removed shadow for complete transparency */
+  box-shadow: none;
   z-index: 10;
   border-radius: 0 0 16px 16px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -251,29 +251,88 @@
   }
 }
 
-/* Media Queries for Small Devices */
+/* Media Queries for Mobile and Tablet Responsiveness */
 @media screen and (max-width: 768px) {
   .chat-content {
-    padding: 0.5rem 0;
     width: 100vw;
-    top: 100px;
+    padding: 0.5rem;
   }
 
   .chat-footer {
-    padding: 0.5rem 0;
     width: 100vw;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .chat-input {
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .icon-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+
+  .chat-message.bot,
+  .chat-message.me {
+    margin: 0 1rem;
+  }
+
+  .message-text {
+    max-width: 100%;
+  }
+
+  .avatar,
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
   }
 }
 
 @media screen and (max-width: 480px) {
   .chat-content {
-    padding: 0.5rem 0;
     width: 100vw;
+    padding: 0.5rem;
   }
 
   .chat-footer {
-    padding: 0.5rem 0;
     width: 100vw;
+  }
+
+  .chat-input {
+    font-size: 12px;
+    width: 100%;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .chat-message.bot,
+  .chat-message.me {
+    margin: 0 0.5rem;
+  }
+
+  .message-text {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .avatar,
+  .user-avatar {
+   display: none;
+  }
+  .toggle-button {
+    position: absolute;
+    top: 74%;
+    margin-top: 150px;
+    right: 90%;
   }
 }
 

@@ -54,7 +54,15 @@
 }
 
 .mobileNavItem:hover {
-  background-color: #008fb3;
+  background-color: white;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 50px 0 0 50px;
+   /* Padding for better aesthetics */
+  margin-left: 20px; /* Margin from the left side */
+  margin-right: 0; /* Ensure it aligns properly with the screen */
+  width: calc(100% - 20px); /* Full width minus the left margin */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); 
 }
 .mobileNavItem.active {
   background-color: white; /* Set active background to white */
