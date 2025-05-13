@@ -41,7 +41,7 @@ const Navbar = () => {
     <div className="nav">
       <div className="navLogo">
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Service_mark.svg"
+          src="./logo.png"
           alt="logo"
           height="80px"
           width="auto"
@@ -57,14 +57,12 @@ const Navbar = () => {
           </div>
           {menuOpen && (
             <div className="dropdownMenu">
-              {["Home 🏠", "Follow-up Visit 🩺", "AI Second Opinion"].map(
+              {["Home 🏠", "AI Second Opinion"].map(
                 (label, index) => (
                   <Link
                     to={
                       index === 0
                         ? "/"
-                        : index === 1
-                        ? "/follow-up"
                         : "/ai-second-opinion"
                     }
                     key={index}
@@ -83,15 +81,15 @@ const Navbar = () => {
       ) : (
         // Desktop View: Standard Navbar
         <div className="navItemContainer">
-          {["Home 🏠", "Follow-up Visit 🩺", "AI Second Opinion 👨‍⚕️"].map(
+          {["Home 🏠", "AI Second Opinion 👨‍⚕️"].map(
             (label, index) => (
               <Link
                 to={
                   index === 0
                     ? "/"
-                    : index === 1
-                    ? "/follow-up"
                     : "/ai-second-opinion"
+                    
+                    
                 }
                 key={index}
                 className={`navItem ${activeIndex === index ? "active" : ""}`}

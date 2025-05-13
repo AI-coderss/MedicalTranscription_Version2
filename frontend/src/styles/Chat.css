@@ -131,7 +131,7 @@
 .chat-message.bot {
   position: relative;
   margin-left: 15rem;
-  margin-right: 3rem;
+  margin-right: 15rem;
   padding: 1rem;
   justify-content: flex-start;
 }

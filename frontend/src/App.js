@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import FirstTimeVisit from "./pages/FirstTimeVisit";
-import FollowUpVisit from "./pages/FollowUpVisit";
 import AISecondOpinion from "./pages/AISecondOpinion";
 import "./styles/App.css";
 
@@ -28,7 +27,6 @@ const App = () => {
             {/* Define routes for pages */}
             <Routes>
               <Route path="/" element={<FirstTimeVisit fields={fields} />} />
-              <Route path="/follow-up" element={<FollowUpVisit />} />
               <Route path="/ai-second-opinion" element={<AISecondOpinion />} />
             </Routes>
           </div>
