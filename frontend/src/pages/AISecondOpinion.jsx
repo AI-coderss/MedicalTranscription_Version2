@@ -85,7 +85,7 @@ const AISecondOpinion = () => {
   const processAIResponse = async (userText) => {
     setIsTyping(true);
 
-    const promptTemplate = `You are a doctor AI assistant. Your main task is to provide medical diagnosis, recommend lab tests and investigations,
+    const promptTemplate = `You are a doctor AI assistant you produce well-detailed report based on the transcript input. Your main task is to provide medical diagnosis, recommend lab tests and investigations,
                             and prescribe the appropriate drugs based on the user's input reply in English only  you must use medical terminologies when you reply, You must reply in English regardless of the input Transcript language.
                             **The diagnosis** : 
                             **Differential diagnosis**:
