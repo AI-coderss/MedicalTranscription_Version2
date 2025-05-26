@@ -1,13 +1,20 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import FirstTimeVisit from "./pages/FirstTimeVisit";
 import AISecondOpinion from "./pages/AISecondOpinion";
 import "./styles/App.css";
 
-const App = () => {
-  // State to store extracted fields
+const AppWrapper = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const mrn = queryParams.get("mrn") || "1234";
+  const doctorId = queryParams.get("doctorId") || "11254";
+  const caseNo = queryParams.get("caseNo") || "7";
+  const patientName = queryParams.get("patientName") || "Ali Hassan Ahmed";
+
   const [fields, setFields] = useState({
     personalHistory: "",
     chiefComplaint: "",
@@ -19,26 +26,43 @@ const App = () => {
   });
 
   return (
-    <Router>
-      <div className="app-container">
-        <Navbar />
-        <div className="content">
-          <div className="main-content">
-            {/* Define routes for pages */}
-            <Routes>
-              <Route path="/" element={<FirstTimeVisit fields={fields} />} />
-              <Route path="/ai-second-opinion" element={<AISecondOpinion />} />
-            </Routes>
-          </div>
-          {/* Pass setFields to Sidebar */}
-          <Sidebar setFields={setFields} />
+    <div className="app-container">
+      <Navbar />
+      <div className="content">
+        <div className="main-content">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <FirstTimeVisit
+                  fields={fields}
+                  mrn={mrn}
+                  doctorId={doctorId}
+                  caseNo={caseNo}
+                  patientName={patientName}
+                />
+              }
+            />
+            <Route path="/ai-second-opinion" element={<AISecondOpinion />} />
+          </Routes>
         </div>
+        <Sidebar
+          setFields={setFields}
+          fields={fields}
+          mrn={mrn}
+          doctorId={doctorId}
+          caseNo={caseNo}
+          patientName={patientName}
+        />
       </div>
-    </Router>
+    </div>
   );
 };
 
+const App = () => (
+  <Router>
+    <AppWrapper />
+  </Router>
+);
+
 export default App;
-
-
-

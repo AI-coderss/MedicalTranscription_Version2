@@ -215,3 +215,11 @@ textarea:focus {
   margin: 4px 0;
   color: #fff;
 }
+.transfer-button {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 9px;
+  font-size: 20px;
+  border-left: 10px solid #747ef2;
+  border-radius: 12px 0 10px 0;
+}
