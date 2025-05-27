@@ -33,7 +33,7 @@
 .fields {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 26px 84px;
+  gap: 10px 84px;
   width: 100%;
   height: auto;
   margin-top: 15px;
@@ -188,11 +188,13 @@ textarea:focus {
 .basic-info {
   margin: 10px 0;
   padding: 10px;
-  background: #007bff;
   border-radius: 8px;
   display: flex;
   gap: 15px;
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
+  border: 1px solid #ececec;
   justify-content: space-between;
 }
 
@@ -213,7 +215,6 @@ textarea:focus {
 }
 .basic-info p {
   margin: 4px 0;
-  color: #fff;
 }
 .button-wrapper {
   width: 100%;
@@ -224,8 +225,7 @@ textarea:focus {
   width: 100%;
   max-width: 300px; /* optional limit */
   padding: 14px 9px;
-  font-size: 20px;
-  border-left: 10px solid #747ef2;
-  border-radius: 12px 0 10px 0;
+  font-size: 16px;
+  border-radius: 6px;
   margin-top: 5px;
 }

@@ -50,19 +50,35 @@ const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
         <img src="/img1.gif" alt="Decoration" className="title-gif" />
       </div>
 
-      <div className="basic-info">
-        <p>
-          <strong>MRN:</strong> {mrn}
-        </p>
-        <p>
-          <strong>Doctor ID:</strong> {doctorId}
-        </p>
-        <p>
-          <strong>Case No:</strong> {caseNo}
-        </p>
-        <p>
-          <strong>Patient Name:</strong> {patientName}
-        </p>
+      <div className="fields test">
+        <div>
+          <label>
+            MRN:
+            <br></br>
+            <input type="text" value={mrn} />
+          </label>
+        </div>
+        <div>
+          <label>
+            Doctor ID:
+            <br></br>
+            <input type="text" value={doctorId} />
+          </label>
+        </div>
+        <div>
+          <label>
+            Case No:
+            <br></br>
+            <input type="text" value={caseNo} />
+          </label>
+        </div>
+        <div>
+          <label>
+            Patient Name:
+            <br></br>
+            <input type="text" value={patientName} />
+          </label>
+        </div>
       </div>
 
       <div className="fields">
@@ -95,7 +111,7 @@ const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
 
         <div
           className="field-group"
-          style={{ width: "100%", marginTop: "35px" }}
+          style={{ width: "100%", marginTop: "10px" }}
         >
           <label htmlFor="requiredLabTestsAndProcedures">
             Required Lab Tests and Procedures:

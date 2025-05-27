@@ -84,3 +84,20 @@
     display: none; /* Hide the footer on mobile for simplicity */
   }
 }
+
+.fields input {
+  resize: vertical;
+  border: 1px solid #ececec;
+  background-color: #ffffff;
+  height: 31px;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 10px;
+}
+input {
+  width: 100%;
+}
