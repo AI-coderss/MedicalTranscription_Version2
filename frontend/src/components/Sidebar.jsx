@@ -24,17 +24,17 @@ const Sidebar = ({ setFields, fields, mrn, doctorId, caseNo, patientName }) => {
   };
 
   return (
-    <div className="sidebar">
-      <div className="sidebar-transfer-btn w-full">
+    <div className="sidebar ">
+      <div className="sidebar-transfer-btn w-full"></div>
+      <AudioRecorder setFields={setFields} />
+      <div class="button-wrapper">
         <button
-          className="transfer-button w-full mt-3.5 p-[14px_9px] text-[20px] border-l-[10px] border-[#747EF2] rounded-[12px_0_10px_0]"
+          className=" transfer-button w-full mt-2 p-[14px_9px] text-[20px] border-l-[10px] border-[#747EF2] rounded-[12px_0_10px_0]"
           onClick={handleTransfer}
         >
           Transfer
         </button>
       </div>
-      <AudioRecorder setFields={setFields} />
-
       <div className="sidebar-footer">© 2024 Your Company</div>
     </div>
   );

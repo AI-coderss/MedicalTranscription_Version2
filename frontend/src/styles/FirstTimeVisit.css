@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px;
+  padding: 30px 100px;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  background-color: #f8f9fa; /* Light neutral background */
-  border-radius: 8px; /* Rounded corners */
-  height: auto; /* Dynamically adjust height */
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  height: auto;
 }
 
 .title-container {
@@ -32,8 +32,8 @@
 
 .fields {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns */
-  gap: 35px; /* Consistent spacing */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px 84px;
   width: 100%;
   height: auto;
   margin-top: 15px;
@@ -215,11 +215,21 @@ textarea:focus {
   margin: 4px 0;
   color: #fff;
 }
-.transfer-button {
+.button-wrapper {
   width: 100%;
-  margin-top: 14px;
+  text-align: center; /* center the button horizontally */
+}
+
+.transfer-button {
+  position: fixed;
+  bottom: 20px;
+  left: 89%;
+  transform: translateX(-50%);
+  width: 50%;
+  max-width: 300px;
   padding: 14px 9px;
   font-size: 20px;
   border-left: 10px solid #747ef2;
   border-radius: 12px 0 10px 0;
+  z-index: 1000;
 }

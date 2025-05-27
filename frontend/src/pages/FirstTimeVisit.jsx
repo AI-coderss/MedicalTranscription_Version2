@@ -1,16 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/FirstTimeVisit.css";
 
 const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
+  const [formData, setFormData] = useState({
+    personalHistory: "",
+    chiefComplaint: "",
+    presentIllness: "",
+    medicationHistory: "",
+    pastHistory: "",
+    familyHistory: "",
+    requiredLabTestsAndProcedures: "",
+  });
+
+  // ✅ Update state when props.fields changes
+  useEffect(() => {
+    if (fields) {
+      setFormData({
+        personalHistory: fields.personalHistory || "",
+        chiefComplaint: fields.chiefComplaint || "",
+        presentIllness: fields.presentIllness || "",
+        medicationHistory: fields.medicationHistory || "",
+        pastHistory: fields.pastHistory || "",
+        familyHistory: fields.familyHistory || "",
+        requiredLabTestsAndProcedures:
+          fields.requiredLabTestsAndProcedures || "",
+      });
+    }
+  }, [fields]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(
-      () => {
-        console.log("Copying to clipboard was successful!");
-        alert("Copied to clipboard!");
-      },
-      (err) => {
-        console.error("Could not copy text: ", err);
-      }
+      () => alert("Copied to clipboard!"),
+      (err) => console.error("Copy failed: ", err)
     );
   };
 
@@ -38,49 +67,25 @@ const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
 
       <div className="fields">
         {[
-          {
-            label: "Personal History",
-            id: "personal-history",
-            value: fields.personalHistory,
-          },
-          {
-            label: "Chief Complaint",
-            id: "chief-complaint",
-            value: fields.chiefComplaint,
-          },
-          {
-            label: "Present Illness",
-            id: "present-illness",
-            value: fields.presentIllness,
-          },
-          {
-            label: "Medication History",
-            id: "medication-history",
-            value: fields.medicationHistory,
-          },
-          {
-            label: "Past History",
-            id: "past-history",
-            value: fields.pastHistory,
-          },
-          {
-            label: "Family History",
-            id: "family-history",
-            value: fields.familyHistory,
-          },
-        ].map(({ label, id, value }) => (
+          { label: "Personal History", id: "personalHistory" },
+          { label: "Chief Complaint", id: "chiefComplaint" },
+          { label: "Present Illness", id: "presentIllness" },
+          { label: "Medication History", id: "medicationHistory" },
+          { label: "Past History", id: "pastHistory" },
+          { label: "Family History", id: "familyHistory" },
+        ].map(({ label, id }) => (
           <div className="field-group" key={id}>
             <label htmlFor={id}>{label}:</label>
             <div className="textarea-container">
               <textarea
                 id={id}
                 className="neumorphic-input"
-                value={value || ""}
-                readOnly
+                value={formData[id]}
+                onChange={handleChange}
               ></textarea>
               <div
                 className="copy-icon-container"
-                onClick={() => copyToClipboard(value)}
+                onClick={() => copyToClipboard(formData[id])}
               >
                 <i className="fas fa-copy copy-icon"></i>
               </div>
@@ -92,18 +97,20 @@ const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
           className="field-group"
           style={{ width: "100%", marginTop: "35px" }}
         >
-          <label htmlFor="lab-tests">Required Lab Tests and Procedures:</label>
+          <label htmlFor="requiredLabTestsAndProcedures">
+            Required Lab Tests and Procedures:
+          </label>
           <div className="textarea-container">
             <textarea
-              id="lab-tests"
+              id="requiredLabTestsAndProcedures"
               className="neumorphic-input"
-              value={fields.requiredLabTestsAndProcedures || ""}
-              readOnly
+              value={formData.requiredLabTestsAndProcedures}
+              onChange={handleChange}
             ></textarea>
             <div
               className="copy-icon-container"
               onClick={() =>
-                copyToClipboard(fields.requiredLabTestsAndProcedures)
+                copyToClipboard(formData.requiredLabTestsAndProcedures)
               }
             >
               <i className="fas fa-copy copy-icon"></i>
