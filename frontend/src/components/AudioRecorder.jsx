@@ -1,27 +1,33 @@
 import React, { useState } from "react";
 import { ReactMic } from "react-mic";
 import axios from "axios";
-import { Howl } from "howler"; // Import Howler.js
+import { Howl } from "howler";
 import Loader from "./Loader";
-import useTranscriptStore from "../store/useTranscriptStore"; // Import Zustand store
+import useTranscriptStore from "../store/useTranscriptStore";
 import "../styles/AudioRecorder.css";
 
-const AudioRecorder = ({ setFields }) => {
+const AudioRecorder = ({
+  setFields,
+  fields,
+  mrn,
+  doctorId,
+  caseNo,
+  patientName,
+}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isTranscriptReady, setIsTranscriptReady] = useState(false); // New state for the New Recording button
+  const [isTranscriptReady, setIsTranscriptReady] = useState(false);
 
-  // Create a Howl instance for the click sound
   const clickSound = new Howl({
-    src: ["/sound.mp3"], // Add the correct path to your sound file
+    src: ["/sound.mp3"],
     volume: 0.2,
   });
   const stopSound = new Howl({
-    src: ["/ui.wav"], // Add the correct path to your sound file
+    src: ["/ui.wav"],
     volume: 0.2,
   });
-  const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
+  const setTranscript = useTranscriptStore((state) => state.setTranscript);
 
   const playClickSound = () => {
     clickSound.play();
@@ -33,7 +39,7 @@ const AudioRecorder = ({ setFields }) => {
     playClickSound();
     setIsRecording(true);
     setIsPaused(false);
-    setIsTranscriptReady(false); // Reset transcript readiness on new recording
+    setIsTranscriptReady(false);
   };
 
   const stopRecording = () => {
@@ -51,9 +57,8 @@ const AudioRecorder = ({ setFields }) => {
     playClickSound();
     setIsRecording(false);
     setIsPaused(false);
-    setIsTranscriptReady(false); // Reset transcript readiness
+    setIsTranscriptReady(false);
 
-    // Clear all fields
     setFields({
       personalHistory: "",
       chiefComplaint: "",
@@ -75,7 +80,6 @@ const AudioRecorder = ({ setFields }) => {
     try {
       setLoading(true);
 
-      // Step 1: Transcribe the audio
       const { data: transcriptionData } = await axios.post(
         "https://test-medic-transcriber-latest.onrender.com/transcribe",
         formData,
@@ -88,10 +92,8 @@ const AudioRecorder = ({ setFields }) => {
       const transcript = transcriptionData.transcript;
       console.log("Transcript: ", transcript);
 
-      // Save transcript to Zustand store
       setTranscript(transcript);
 
-      // Step 2: Extract fields from the transcript
       const { data: fieldsData } = await axios.post(
         "https://test-medic-transcriber-latest.onrender.com/extract_fields",
         { transcript }
@@ -100,7 +102,6 @@ const AudioRecorder = ({ setFields }) => {
       console.log("Fields Response: ", fieldsData);
       setFields(fieldsData);
 
-      // Mark transcript as ready
       setIsTranscriptReady(true);
     } catch (error) {
       console.error("Error during transcription or field extraction:", error);
@@ -112,6 +113,27 @@ const AudioRecorder = ({ setFields }) => {
   const onStop = (recordedBlob) => {
     console.log("Recorded Blob: ", recordedBlob);
     handleTranscription(recordedBlob);
+  };
+
+  // New: Transfer handler here
+  const handleTransfer = () => {
+    const payload = {
+      trasncript: {
+        mrn,
+        doctorId,
+        caseNo,
+        patientName,
+        personalHistory: fields.personalHistory || "",
+        presentIllness: fields.presentIllness || "",
+        pastHistory: fields.pastHistory || "",
+        chiefComplaint: fields.chiefComplaint || "",
+        medicationHistory: fields.medicationHistory || "",
+        familyHistory: fields.familyHistory || "",
+      },
+    };
+
+    console.log("Transfer Payload:", JSON.stringify(payload, null, 2));
+    alert("Data prepared for transfer! Check console.");
   };
 
   return (
@@ -144,21 +166,20 @@ const AudioRecorder = ({ setFields }) => {
           <Loader isLoading={loading} />
         </div>
       )}
+
+      {/* Show Transfer button only when loading is false and transcript is ready */}
+      {!loading && isTranscriptReady && (
+        <div className="button-wrapper" style={{ marginTop: "20px" }}>
+          <button
+            className="transfer-button w-full p-[14px_9px] text-[20px] border-l-[10px] border-[#747EF2] rounded-[12px_0_10px_0]"
+            onClick={handleTransfer}
+          >
+            Transfer
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default AudioRecorder;
-
-
-
-
-
-
-
-
-
-
-
-
-
