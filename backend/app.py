@@ -113,6 +113,7 @@ def extract():
     if not transcript:
         return jsonify({"error": "No transcript provided"}), 400
 
+
     fields_result = extract_fields(transcript)
     fields = {
         "personalHistory": fields_result.split("**Personal History:**")[1].split("**Chief Complaint:**")[0].strip(),
