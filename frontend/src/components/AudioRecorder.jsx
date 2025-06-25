@@ -116,7 +116,7 @@ const AudioRecorder = ({
   };
 
   // New: Transfer handler here
-  const handleTransfer = () => {
+  const handleTransfer = async () => {
     const payload = {
       trasncript: {
         mrn,
@@ -133,7 +133,24 @@ const AudioRecorder = ({
     };
 
     console.log("Transfer Payload:", JSON.stringify(payload, null, 2));
-    alert("Data prepared for transfer! Check console.");
+
+    try {
+      const response = await axios.post(
+        "https://emr-test.dsah.sa/LIVE/MRM_API/api/History/SaveHistory",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Transfer Success:", response.data);
+      alert("Transfer successful!");
+    } catch (error) {
+      console.error("Transfer Failed:", error);
+      alert("Transfer failed. Please check the console for details.");
+    }
   };
 
   return (
