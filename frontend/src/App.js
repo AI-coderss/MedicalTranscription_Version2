@@ -10,10 +10,10 @@ const AppWrapper = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  const mrn = queryParams.get("mrn") || "1234";
-  const doctorId = queryParams.get("doctorId") || "11254";
-  const caseNo = queryParams.get("caseNo") || "7";
-  const patientName = queryParams.get("patientName") || "Ali Hassan Ahmed";
+  const mrn = queryParams.get("mrn") || "";
+  const doctorId = queryParams.get("doctorId") || "";
+  const caseNo = queryParams.get("caseNo") || "";
+  const patientName = queryParams.get("patientName") || "";
 
   const [fields, setFields] = useState({
     personalHistory: "",
