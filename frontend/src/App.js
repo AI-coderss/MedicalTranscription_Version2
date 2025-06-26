@@ -13,7 +13,7 @@ const AppWrapper = () => {
   const mrn = queryParams.get("mrn") || "";
   const doctorId = queryParams.get("doctorId") || "";
   const caseNo = queryParams.get("caseNo") || "";
-  const patientName = queryParams.get("patientName") || "";
+  const patientName = queryParams.get("patName") || "";
 
   const [fields, setFields] = useState({
     personalHistory: "",
