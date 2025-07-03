@@ -118,18 +118,16 @@ const AudioRecorder = ({
   // New: Transfer handler here
   const handleTransfer = async () => {
     const payload = {
-      trasncript: {
-        mrn,
-        doctorId,
-        caseNo,
-        patientName,
-        personalHistory: fields.personalHistory || "",
-        presentIllness: fields.presentIllness || "",
-        pastHistory: fields.pastHistory || "",
-        chiefComplaint: fields.chiefComplaint || "",
-        medicationHistory: fields.medicationHistory || "",
-        familyHistory: fields.familyHistory || "",
-      },
+      mrn,
+      doctorId,
+      caseNo,
+      patientName,
+      personalHistory: fields.personalHistory || "",
+      presentIllness: fields.presentIllness || "",
+      pastHistory: fields.pastHistory || "",
+      chiefComplaint: fields.chiefComplaint || "",
+      medicationHistory: fields.medicationHistory || "",
+      familyHistory: fields.familyHistory || "",
     };
 
     console.log("Transfer Payload:", JSON.stringify(payload, null, 2));
