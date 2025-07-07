@@ -122,6 +122,7 @@ const AudioRecorder = ({
       doctorId,
       caseNo,
       patientName,
+      HospitalCode: "01",
       personalHistory: fields.personalHistory || "",
       presentIllness: fields.presentIllness || "",
       pastHistory: fields.pastHistory || "",
