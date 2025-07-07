@@ -11,7 +11,6 @@ const AppWrapper = () => {
   const queryParams = new URLSearchParams(location.search);
 
   const mrn = queryParams.get("mrn") || "";
-  const doctorId = queryParams.get("doctorId") || "";
   const caseNo = queryParams.get("caseNo") || "";
   const patientName = queryParams.get("patName") || "";
   const UserId = queryParams.get("UserId") || "";
@@ -38,7 +37,6 @@ const AppWrapper = () => {
                 <FirstTimeVisit
                   fields={fields}
                   mrn={mrn}
-                  doctorId={doctorId}
                   caseNo={caseNo}
                   patientName={patientName}
                   UserId={UserId}
@@ -52,7 +50,6 @@ const AppWrapper = () => {
           setFields={setFields}
           fields={fields}
           mrn={mrn}
-          doctorId={doctorId}
           caseNo={caseNo}
           patientName={patientName}
           UserId={UserId}

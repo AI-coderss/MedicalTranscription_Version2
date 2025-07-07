@@ -10,7 +10,6 @@ const AudioRecorder = ({
   setFields,
   fields,
   mrn,
-  doctorId,
   caseNo,
   patientName,
   UserId,
