@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "../styles/FirstTimeVisit.css";
 
-const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
+const FirstTimeVisit = ({
+  fields,
+  mrn,
+  doctorId,
+  caseNo,
+  patientName,
+  UserId,
+}) => {
   const [formData, setFormData] = useState({
     personalHistory: "",
     chiefComplaint: "",
@@ -77,6 +84,13 @@ const FirstTimeVisit = ({ fields, mrn, doctorId, caseNo, patientName }) => {
             Patient Name:
             <br></br>
             <input type="text" value={patientName} />
+          </label>
+        </div>
+        <div>
+          <label>
+            User Id:
+            <br></br>
+            <input type="text" value={UserId} />
           </label>
         </div>
       </div>

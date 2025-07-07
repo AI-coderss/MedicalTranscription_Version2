@@ -14,6 +14,7 @@ const AppWrapper = () => {
   const doctorId = queryParams.get("doctorId") || "";
   const caseNo = queryParams.get("caseNo") || "";
   const patientName = queryParams.get("patName") || "";
+  const UserId = queryParams.get("UserId") || "";
 
   const [fields, setFields] = useState({
     personalHistory: "",
@@ -40,6 +41,7 @@ const AppWrapper = () => {
                   doctorId={doctorId}
                   caseNo={caseNo}
                   patientName={patientName}
+                  UserId={UserId}
                 />
               }
             />
@@ -53,6 +55,7 @@ const AppWrapper = () => {
           doctorId={doctorId}
           caseNo={caseNo}
           patientName={patientName}
+          UserId={UserId}
         />
       </div>
     </div>

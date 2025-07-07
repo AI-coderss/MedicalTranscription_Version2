@@ -13,6 +13,7 @@ const AudioRecorder = ({
   doctorId,
   caseNo,
   patientName,
+  UserId,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -128,7 +129,7 @@ const AudioRecorder = ({
         medicationHistory: fields.medicationHistory || "",
         familyHistory: fields.familyHistory || "",
         HospitalCode: "01",
-        UserId: "HMIS",
+        UserId,
       },
     };
 
