@@ -36,6 +36,7 @@ const AppWrapper = () => {
               element={
                 <FirstTimeVisit
                   fields={fields}
+                  setFields={setFields}
                   mrn={mrn}
                   caseNo={caseNo}
                   patientName={patientName}

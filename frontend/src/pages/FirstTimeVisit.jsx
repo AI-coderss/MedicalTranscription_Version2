@@ -1,36 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../styles/FirstTimeVisit.css";
 
-const FirstTimeVisit = ({ fields, mrn, caseNo, patientName, UserId }) => {
-  const [formData, setFormData] = useState({
-    personalHistory: "",
-    chiefComplaint: "",
-    presentIllness: "",
-    medicationHistory: "",
-    pastHistory: "",
-    familyHistory: "",
-    requiredLabTestsAndProcedures: "",
-  });
-
-  // ✅ Update state when props.fields changes
-  useEffect(() => {
-    if (fields) {
-      setFormData({
-        personalHistory: fields.personalHistory || "",
-        chiefComplaint: fields.chiefComplaint || "",
-        presentIllness: fields.presentIllness || "",
-        medicationHistory: fields.medicationHistory || "",
-        pastHistory: fields.pastHistory || "",
-        familyHistory: fields.familyHistory || "",
-        requiredLabTestsAndProcedures:
-          fields.requiredLabTestsAndProcedures || "",
-      });
-    }
-  }, [fields]);
-
+const FirstTimeVisit = ({
+  fields,
+  setFields,
+  mrn,
+  caseNo,
+  patientName,
+  UserId,
+}) => {
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({
+    setFields((prev) => ({
       ...prev,
       [id]: value,
     }));
@@ -54,29 +35,29 @@ const FirstTimeVisit = ({ fields, mrn, caseNo, patientName, UserId }) => {
         <div>
           <label>
             MRN:
-            <br></br>
-            <input type="text" value={mrn} />
+            <br />
+            <input type="text" value={mrn} readOnly />
           </label>
         </div>
         <div>
           <label>
             Case No:
-            <br></br>
-            <input type="text" value={caseNo} />
+            <br />
+            <input type="text" value={caseNo} readOnly />
           </label>
         </div>
         <div>
           <label>
             Patient Name:
-            <br></br>
-            <input type="text" value={patientName} />
+            <br />
+            <input type="text" value={patientName} readOnly />
           </label>
         </div>
         <div>
           <label>
             User ID:
-            <br></br>
-            <input type="text" value={UserId} />
+            <br />
+            <input type="text" value={UserId} readOnly />
           </label>
         </div>
       </div>
@@ -96,12 +77,12 @@ const FirstTimeVisit = ({ fields, mrn, caseNo, patientName, UserId }) => {
               <textarea
                 id={id}
                 className="neumorphic-input"
-                value={formData[id]}
+                value={fields[id] || ""}
                 onChange={handleChange}
-              ></textarea>
+              />
               <div
                 className="copy-icon-container"
-                onClick={() => copyToClipboard(formData[id])}
+                onClick={() => copyToClipboard(fields[id] || "")}
               >
                 <i className="fas fa-copy copy-icon"></i>
               </div>
@@ -120,13 +101,13 @@ const FirstTimeVisit = ({ fields, mrn, caseNo, patientName, UserId }) => {
             <textarea
               id="requiredLabTestsAndProcedures"
               className="neumorphic-input"
-              value={formData.requiredLabTestsAndProcedures}
+              value={fields.requiredLabTestsAndProcedures || ""}
               onChange={handleChange}
-            ></textarea>
+            />
             <div
               className="copy-icon-container"
               onClick={() =>
-                copyToClipboard(formData.requiredLabTestsAndProcedures)
+                copyToClipboard(fields.requiredLabTestsAndProcedures || "")
               }
             >
               <i className="fas fa-copy copy-icon"></i>

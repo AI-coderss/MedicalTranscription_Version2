@@ -2,14 +2,14 @@ import React from "react";
 import AudioRecorder from "./AudioRecorder";
 import "../styles/Sidebar.css";
 
-const Sidebar = ({ setFields, fields, mrn, doctorId, caseNo, patientName }) => {
+const Sidebar = ({ setFields, fields, mrn, UserId, caseNo, patientName }) => {
   return (
     <div className="sidebar ">
       <AudioRecorder
         setFields={setFields}
         fields={fields}
         mrn={mrn}
-        doctorId={doctorId}
+        UserId={UserId}
         caseNo={caseNo}
         patientName={patientName}
       />
