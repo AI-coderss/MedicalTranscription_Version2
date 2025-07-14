@@ -136,7 +136,7 @@ const AudioRecorder = ({
 
     try {
       const response = await axios.post(
-        "https://emr-test.dsah.sa/LIVE/MRM_API/api/History/SaveHistory",
+        "https://emr.dsah.sa/LIVE/MRM_API/api/History/SaveHistory",
         payload,
         {
           headers: {
