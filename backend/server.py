@@ -1,22 +1,26 @@
+
 import os
 import json
 import re
 import logging
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-import qdrant_client
+# ✅ Correct Qdrant + LangChain imports
+from qdrant_client import QdrantClient
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_qdrant import Qdrant
+from langchain_qdrant import QdrantVectorStore
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # -------------------- ENV & LOG --------------------
 load_dotenv()
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY not found in environment.")
@@ -35,69 +39,100 @@ app = Flask(__name__)
 CORS(app, origins=[
     "http://localhost:3000",
     "https://medicaltranscription-version2-tests.onrender.com",
-   "https://medicaltranscription-version2.onrender.com"
+    "https://medicaltranscription-version2.onrender.com",
+   
 ])
 
 # -------------------- VECTOR STORE --------------------
-def get_vector_store():
-    client = qdrant_client.QdrantClient(
+def get_vector_store() -> QdrantVectorStore:
+    """
+    Build a LangChain Qdrant vector store against an existing collection.
+    """
+    client = QdrantClient(
         url=QDRANT_HOST,
         api_key=QDRANT_API_KEY,
         timeout=60.0
     )
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-    return Qdrant(client=client, collection_name=QDRANT_COLLECTION_NAME, embeddings=embeddings)
+    return QdrantVectorStore(
+        client=client,
+        collection_name=QDRANT_COLLECTION_NAME,
+        embedding=embeddings,
+    )
 
 # -------------------- RAG CHAIN --------------------
 def build_claims_chain():
     """
-    Retrieves clinical context (ICD-10 hints, payer rules, labs/radiology guidance, etc.)
-    and asks the LLM to produce a STRICT JSON object.
+    Retrieval pipeline:
+      - Retriever uses 'input' to fetch relevant context.
+      - Stuff chain combines retrieved docs into {context} and feeds the prompt
+        along with {transcript} and {fields_json}.
     """
     retriever = get_vector_store().as_retriever()
     llm = ChatOpenAI(model="gpt-4o", temperature=0, openai_api_key=OPENAI_API_KEY)
 
+    # ⚠️ IMPORTANT:
+    # - Include {context} in the prompt (required).
+    # - Escape literal braces in the JSON schema with {{ }} so the template engine
+    #   doesn't treat them as variables.
     system = """
-You are a medical claims review assistant. Your job is to analyze a clinical encounter transcript
-plus extracted visit fields and produce a structured recommendation for CLAIMS REVIEW.
+You are a medical claims review assistant. Analyze the clinical encounter transcript
+and extracted visit fields, then produce a STRICT JSON object for CLAIMS REVIEW.
 
-Follow these rules:
-- Consider differential diagnoses and assign **probabilities** (0–100) that sum loosely to <= 100
-  (do not force exactly 100 if uncertain).
-- Suggest **ICD-10** codes for each diagnosis (best-guess only).
-- Recommend appropriate **laboratory tests** (with brief rationale and optional code if known).
-- Recommend **radiology** only if clinically indicated. If not indicated, return the string "N/A".
-  Otherwise return a list of items with (name/modality/rationale).
-- Suggest **other services** (e.g., referrals, procedures) with rationale.
-- Include a short **notes** field for caveats or payer-policy highlights from retrieved context.
+Use the retrieved clinical/coding context below to guide compliance, ICD-10 selection,
+and appropriate services:
+
+CONTEXT:
+{context}
+
+REQUIREMENTS:
+- Consider differential diagnoses and assign probabilities (0–100).
+- Provide ICD-10 codes for each diagnosis (best-guess).
+- Recommend appropriate LAB tests (brief rationale and optional code).
+- Recommend RADIOLOGY only if indicated. If NOT indicated, return the string "N/A".
+- Suggest OTHER SERVICES (e.g., referrals/procedures) with rationale.
+- Include a short 'notes' field for caveats or payer-policy highlights.
 - OUTPUT MUST BE STRICT, VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
-- JSON schema:
 
-{
+Return JSON matching EXACTLY this schema (note: braces are literal):
+
+{{
   "diagnoses": [
-    { "name": "string", "icd10": "string", "probability": 0 }
+    {{ "name": "string", "icd10": "string", "probability": 0 }}
   ],
   "labs": [
-    { "name": "string", "code": "string (optional)", "rationale": "string (optional)" }
+    {{ "name": "string", "code": "string (optional)", "rationale": "string (optional)" }}
   ],
   "radiology": "N/A" | [
-    { "name": "string", "modality": "string (optional)", "rationale": "string (optional)" }
+    {{ "name": "string", "modality": "string (optional)", "rationale": "string (optional)" }}
   ],
   "other_services": [
-    { "name": "string", "category": "string (optional)", "rationale": "string (optional)" }
+    {{ "name": "string", "category": "string (optional)", "rationale": "string (optional)" }}
   ],
   "notes": "string"
-}
+}}
+"""
 
-Return ONLY that JSON.
+    user = """
+Transcript:
+{transcript}
+
+Extracted Fields JSON:
+{fields_json}
+
+Respond with JSON only.
 """
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", system),
-        ("user", "Transcript:\n{transcript}\n\nExtracted Fields JSON:\n{fields_json}\n\nUse retrieved guidelines/policies/coding help from the context to support your output.")
+        ("user", user),
     ])
 
-    combine_chain = create_stuff_documents_chain(llm, prompt)
+    combine_chain = create_stuff_documents_chain(
+        llm=llm,
+        prompt=prompt
+        # (Optional) document_variable_name="context"  # default is "context"
+    )
     return create_retrieval_chain(retriever, combine_chain)
 
 claims_chain = build_claims_chain()
@@ -105,7 +140,8 @@ claims_chain = build_claims_chain()
 # -------------------- HELPERS --------------------
 def safe_json_extract(text: str) -> Dict[str, Any]:
     """
-    Extract first JSON object from text; fallback to an empty schema.
+    Extract the first JSON object from model output; otherwise return
+    a safe default skeleton and note the issue in 'notes'.
     """
     default = {
         "diagnoses": [],
@@ -117,15 +153,13 @@ def safe_json_extract(text: str) -> Dict[str, Any]:
     if not text:
         return default
 
-    # find the first {...} block
     m = re.search(r"\{[\s\S]*\}", text)
     if not m:
-        # maybe the model returned array at top?
+        # Try if whole text is JSON already
         try:
             j = json.loads(text)
             if isinstance(j, dict):
                 return j
-            # if it's not dict, wrap as notes
             default["notes"] = f"Model returned non-dict JSON: {type(j)}"
             return default
         except Exception:
@@ -146,10 +180,10 @@ def health():
 @app.post("/claims-review")
 def claims_review():
     """
-    Body:
+    POST body:
     {
-      "transcript": "full clinical conversation",
-      "fields": { ... your extracted fields ... }
+      "transcript": "full clinical conversation text",
+      "fields": { ... extracted fields object ... }
     }
     """
     body = request.get_json(force=True, silent=True) or {}
@@ -157,20 +191,22 @@ def claims_review():
     fields = body.get("fields") or {}
 
     if not transcript:
-      return jsonify({"error": "Missing transcript"}), 400
+        return jsonify({"error": "Missing transcript"}), 400
 
     fields_json = json.dumps(fields, ensure_ascii=False)
 
     try:
+        # 'input' drives the retriever; pass transcript so retrieval matches the case.
         result = claims_chain.invoke({
+            "input": transcript,
             "transcript": transcript,
             "fields_json": fields_json
         })
-        # result["answer"] contains the model output since we're using stuff_documents_chain
-        raw = result.get("answer") or ""
+
+        raw = result.get("answer") or ""  # stuff chain returns text here
         parsed = safe_json_extract(raw)
 
-        # sanitize probability numeric range
+        # Normalize probabilities to 0–100 integers
         for d in parsed.get("diagnoses", []):
             try:
                 p = d.get("probability", 0)
@@ -179,8 +215,7 @@ def claims_review():
                 p = int(round(float(p)))
             except Exception:
                 p = 0
-            p = max(0, min(100, p))
-            d["probability"] = p
+            d["probability"] = max(0, min(100, p))
 
         return jsonify(parsed)
     except Exception as e:
@@ -189,5 +224,5 @@ def claims_review():
 
 # -------------------- MAIN --------------------
 if __name__ == "__main__":
-    # Run on 5050 to match the frontend default
+    # Run on 5050 by default
     app.run(host="0.0.0.0", port=5050, debug=True)
