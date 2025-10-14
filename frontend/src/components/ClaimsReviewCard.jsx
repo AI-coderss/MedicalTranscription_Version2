@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/ClaimsReviewCard.css";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5050";
+const API_BASE =  "https://claims-review-backend-server.onrender.com";
 
 function toPercent(n) {
   if (typeof n === "number") return Math.max(0, Math.min(100, Math.round(n)));
