@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import FirstTimeVisit from "./pages/FirstTimeVisit";
 import AISecondOpinion from "./pages/AISecondOpinion";
-import ClaimsReviewCard from "./components/ClaimsReviewCard"; 
+import ClaimsReviewCard from "./components/ClaimsReviewCard";
+
+import useClaimsReviewStore from "./store/useClaimsReviewStore"; // ⬅️ NEW
 import "./styles/App.css";
 
 const App = () => {
-  // State to store extracted fields
+  // Local fields for FirstTimeVisit page (kept as your UI state)
   const [fields, setFields] = useState({
     personalHistory: "",
     chiefComplaint: "",
@@ -19,25 +22,26 @@ const App = () => {
     requiredLabTestsAndProcedures: "",
   });
 
-  // These are for the Claims Review pop-up
-  const [claimsOpen, setClaimsOpen] = useState(false);
-  const [finalTranscript, setFinalTranscript] = useState("");
+  // Zustand — single source of truth to open the Claims Review overlay
+  const open = useClaimsReviewStore((s) => s.open);
+  const crTranscript = useClaimsReviewStore((s) => s.transcript);
+  const crFields = useClaimsReviewStore((s) => s.fields);
+  const openClaimsReview = useClaimsReviewStore((s) => s.openClaimsReview);
+  const closeClaimsReview = useClaimsReviewStore((s) => s.closeClaimsReview);
 
-  // Optional: Sidebar can call this when the transcript is finished
+  // Optional callback path (besides direct store usage)
   const handleTranscriptionFinished = ({ transcript, fields: newFields }) => {
     if (newFields && typeof newFields === "object") {
       setFields((prev) => ({ ...prev, ...newFields }));
     }
-    if (transcript) setFinalTranscript(transcript);
-    setClaimsOpen(true);
+    openClaimsReview({ transcript, fields: newFields });
   };
 
-  // ALSO support a global app-level event so you don't have to modify Sidebar if you don't want to.
-  // Usage from anywhere (e.g. your Sidebar after finishing transcription):
-  // window.dispatchEvent(new CustomEvent('dsah:transcriptionFinished', { detail: { transcript, fields } }));
+  // ALSO support the global event fallback
   useEffect(() => {
     const onDone = (e) => {
       const { transcript, fields: newFields } = e.detail || {};
+      console.info("[App] Global transcriptionFinished event received");
       handleTranscriptionFinished({ transcript, fields: newFields });
     };
     window.addEventListener("dsah:transcriptionFinished", onDone);
@@ -51,24 +55,23 @@ const App = () => {
         <Navbar />
         <div className="content">
           <div className="main-content">
-            {/* Define routes for pages */}
             <Routes>
               <Route path="/" element={<FirstTimeVisit fields={fields} />} />
               <Route path="/ai-second-opinion" element={<AISecondOpinion />} />
             </Routes>
           </div>
 
-          {/* Pass setFields and an optional callback for transcription finish */}
+          {/* Sidebar now receives the optional callback as well */}
           <Sidebar setFields={setFields} onTranscriptionFinished={handleTranscriptionFinished} />
         </div>
 
-        {/* Claims Review overlay (conditionally rendered) */}
-        {claimsOpen && (
+        {/* Claims Review overlay, driven by Zustand */}
+        {open && (
           <ClaimsReviewCard
-            open={claimsOpen}
-            onClose={() => setClaimsOpen(false)}
-            transcript={finalTranscript}
-            fields={fields}
+            open={open}
+            onClose={closeClaimsReview}
+            transcript={crTranscript}
+            fields={crFields}
           />
         )}
       </div>
@@ -77,6 +80,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 

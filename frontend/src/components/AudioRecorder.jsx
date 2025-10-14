@@ -1,45 +1,41 @@
 import React, { useState } from "react";
 import { ReactMic } from "react-mic";
 import axios from "axios";
-import { Howl } from "howler"; // Import Howler.js
+import { Howl } from "howler";
 import Loader from "./Loader";
-import useTranscriptStore from "../store/useTranscriptStore"; // Import Zustand store
+import useTranscriptStore from "../store/useTranscriptStore";
+import useClaimsReviewStore from "../store/useClaimsReviewStore"; // ⬅️ NEW
 import "../styles/AudioRecorder.css";
 
-const AudioRecorder = ({ setFields }) => {
+const AudioRecorder = ({ setFields, onTranscriptionFinished }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isTranscriptReady, setIsTranscriptReady] = useState(false); // New state for the New Recording button
+  const [isTranscriptReady, setIsTranscriptReady] = useState(false);
 
-  // Create a Howl instance for the click sound
-  const clickSound = new Howl({
-    src: ["/sound.mp3"], // Add the correct path to your sound file
-    volume: 0.2,
-  });
-  const stopSound = new Howl({
-    src: ["/ui.wav"], // Add the correct path to your sound file
-    volume: 0.2,
-  });
-  const setTranscript = useTranscriptStore((state) => state.setTranscript); // Zustand setter
+  // Sounds
+  const clickSound = new Howl({ src: ["/sound.mp3"], volume: 0.2 });
+  const stopSound = new Howl({ src: ["/ui.wav"], volume: 0.2 });
 
-  const playClickSound = () => {
-    clickSound.play();
-  };
-  const playStopSound = () => {
-    stopSound.play();
-  };
+  // Zustand stores
+  const setTranscript = useTranscriptStore((s) => s.setTranscript);
+  const openClaimsReview = useClaimsReviewStore((s) => s.openClaimsReview);
+
+  const playClickSound = () => clickSound.play();
+  const playStopSound = () => stopSound.play();
+
   const startRecording = () => {
     playClickSound();
     setIsRecording(true);
     setIsPaused(false);
-    setIsTranscriptReady(false); // Reset transcript readiness on new recording
+    setIsTranscriptReady(false);
   };
 
   const stopRecording = () => {
     playStopSound();
     setIsRecording(false);
     setIsPaused(false);
+    // ReactMic will invoke onStop with the recordedBlob — that triggers the pipeline
   };
 
   const togglePauseResume = () => {
@@ -51,9 +47,8 @@ const AudioRecorder = ({ setFields }) => {
     playClickSound();
     setIsRecording(false);
     setIsPaused(false);
-    setIsTranscriptReady(false); // Reset transcript readiness
-
-    // Clear all fields
+    setIsTranscriptReady(false);
+    // Clear UI fields
     setFields({
       personalHistory: "",
       chiefComplaint: "",
@@ -65,58 +60,64 @@ const AudioRecorder = ({ setFields }) => {
     });
   };
 
+  // === Core pipeline after STOP ===
   const handleTranscription = async (recordedBlob) => {
-    const audioFile = new File([recordedBlob.blob], "temp.wav", {
-      type: "audio/wav",
-    });
+    const audioFile = new File([recordedBlob.blob], "temp.wav", { type: "audio/wav" });
     const formData = new FormData();
     formData.append("audio_data", audioFile);
 
     try {
       setLoading(true);
+      console.info("[AudioRecorder] Uploading audio for transcription…");
 
-      // Step 1: Transcribe the audio
+      // 1) Transcribe
       const { data: transcriptionData } = await axios.post(
         "https://test-medic-transcriber-latest.onrender.com/transcribe",
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      const transcript = transcriptionData.transcript;
-      console.log("Transcript: ", transcript);
+      const transcript = (transcriptionData?.transcript || "").trim();
+      console.info("[AudioRecorder] Transcript length:", transcript.length);
 
-      // Save transcript to Zustand store
+      // Save transcript to transcript store (optional, for other pages/tools)
       setTranscript(transcript);
 
-      // Step 2: Extract fields from the transcript
+      // 2) Extract fields
       const { data: fieldsData } = await axios.post(
         "https://test-medic-transcriber-latest.onrender.com/extract_fields",
         { transcript }
       );
+      console.info("[AudioRecorder] Fields extracted:", fieldsData);
 
-      console.log("Fields Response: ", fieldsData);
+      // Populate UI fields immediately
       setFields(fieldsData);
 
-      // Mark transcript as ready
+      // 3) FIRE THE TRIGGER — open Claims Review via Zustand
+      openClaimsReview({ transcript, fields: fieldsData });
+
+      // (Optional, additional paths — keep for robustness)
+      onTranscriptionFinished?.({ transcript, fields: fieldsData });
+      window.dispatchEvent(
+        new CustomEvent("dsah:transcriptionFinished", { detail: { transcript, fields: fieldsData } })
+      );
+
       setIsTranscriptReady(true);
     } catch (error) {
-      console.error("Error during transcription or field extraction:", error);
+      console.error("Error during transcription/field extraction:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const onStop = (recordedBlob) => {
-    console.log("Recorded Blob: ", recordedBlob);
+    console.info("[AudioRecorder] onStop received blob:", recordedBlob?.blob?.size, "bytes");
     handleTranscription(recordedBlob);
   };
 
   return (
     <div className="audio-recorder">
       <h3>MEDICAL TRANSCRIPTION 🎙️</h3>
+
       <ReactMic
         record={isRecording}
         pause={isPaused}
@@ -125,6 +126,7 @@ const AudioRecorder = ({ setFields }) => {
         visualSetting="frequencyBars"
         backgroundColor="#FFFFFF"
       />
+
       <div className="recorder-buttons">
         <button onClick={startRecording} disabled={isRecording && !isPaused}>
           Start Recording
@@ -139,6 +141,7 @@ const AudioRecorder = ({ setFields }) => {
           New Recording
         </button>
       </div>
+
       {loading && (
         <div className="loader-container">
           <Loader isLoading={loading} />
@@ -149,6 +152,7 @@ const AudioRecorder = ({ setFields }) => {
 };
 
 export default AudioRecorder;
+
 
 
 
