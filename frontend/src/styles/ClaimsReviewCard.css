@@ -1,0 +1,257 @@
+/* Overlay */
+.claims-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 22, 0.55);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+}
+
+/* Card */
+.claims-card {
+  width: min(92vw, 900px);
+  max-height: 86vh;
+  overflow: auto;
+  background: linear-gradient(180deg, #0f172a 0%, #0b1222 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  color: #e5e7eb;
+  padding: 18px 18px 12px;
+}
+
+/* Header */
+.claims-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.85));
+  padding: 8px 4px 12px 4px;
+  z-index: 1;
+}
+
+.claims-title-wrap h2 {
+  font-size: 20px;
+  margin: 0;
+  letter-spacing: 0.2px;
+}
+
+.claims-subtitle {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.claims-close {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e5e7eb;
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.claims-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Context row */
+.claims-context {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 8px 2px 14px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+.claims-context-label {
+  color: #94a3b8;
+}
+
+/* Loading / Error */
+.claims-loading, .claims-error {
+  display: grid;
+  place-items: center;
+  padding: 36px 10px;
+  color: #cbd5e1;
+  text-align: center;
+}
+.claims-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid rgba(148, 163, 184, 0.35);
+  border-top-color: #94a3b8;
+  animation: claims-spin 0.9s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes claims-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Sections */
+.claims-section {
+  margin: 16px 2px;
+  padding: 14px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.claims-section-header h3 {
+  margin: 0 0 2px 0;
+  font-size: 16px;
+}
+.claims-section-header p {
+  margin: 0;
+  color: #9aa7bd;
+  font-size: 13px;
+}
+
+/* Variants for quick visual separation (you can tune colors later) */
+.claims-section--diagnosis { border-left: 4px solid #7dd3fc; }
+.claims-section--labs      { border-left: 4px solid #86efac; }
+.claims-section--radiology { border-left: 4px solid #fca5a5; }
+.claims-section--other     { border-left: 4px solid #d8b4fe; }
+.claims-section--notes     { border-left: 4px solid #fde68a; }
+
+/* Pills */
+.claims-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  color: #e5e7eb;
+}
+
+/* Empty state */
+.claims-empty {
+  color: #9aa7bd;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+/* Table */
+.claims-table-wrap {
+  overflow: auto;
+}
+.claims-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.claims-table th, .claims-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.claims-table thead th {
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+/* Probability bar */
+.prob-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.prob-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(148, 163, 184, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.prob-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #22d3ee, #0ea5e9);
+}
+.prob-label {
+  font-variant-numeric: tabular-nums;
+  color: #e2e8f0;
+  min-width: 42px;
+  text-align: right;
+}
+
+/* Lists */
+.claims-list {
+  list-style: none;
+  margin: 8px 0 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.list-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  flex-wrap: wrap;
+}
+.item-name { color: #e5e7eb; }
+.item-code {
+  font-size: 12px;
+  color: #a5b4fc;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.35);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.item-sub {
+  margin: 6px 0 0 0;
+  color: #9aa7bd;
+  font-size: 13px;
+}
+
+/* Notes */
+.claims-notes {
+  white-space: pre-wrap;
+  background: rgba(234, 179, 8, 0.06);
+  border: 1px solid rgba(234, 179, 8, 0.18);
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #fde68a;
+  font-size: 13px;
+}
+
+/* Actions */
+.claims-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 18px 2px 6px;
+}
+.btn-primary, .btn-secondary {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #e5e7eb;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.06);
+}
+.btn-primary {
+  background: linear-gradient(180deg, rgba(59,130,246,0.35), rgba(37,99,235,0.28));
+  border-color: rgba(59,130,246,0.35);
+}
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); }
