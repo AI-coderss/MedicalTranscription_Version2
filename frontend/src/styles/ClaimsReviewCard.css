@@ -1,257 +1,299 @@
-/* Overlay */
-.claims-backdrop {
+/* ===== Non-blocking layer: lets the doctor see + use the fields underneath ===== */
+.cr-layer {
   position: fixed;
   inset: 0;
-  background: rgba(8, 12, 22, 0.55);
-  backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
   z-index: 9999;
+  pointer-events: none; /* critical: do NOT intercept interactions below */
 }
 
-/* Card */
-.claims-card {
-  width: min(92vw, 900px);
-  max-height: 86vh;
-  overflow: auto;
-  background: linear-gradient(180deg, #0f172a 0%, #0b1222 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+/* ===== Card: full-height white panel ===== */
+.cr-card {
+  position: absolute; /* framer-motion sets x/y via transform */
+  width: min(96vw, 1000px);
+  height: calc(100vh - 48px);
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  color: #e5e7eb;
-  padding: 18px 18px 12px;
-}
-
-/* Header */
-.claims-card-header {
+    0 18px 40px rgba(15, 23, 42, 0.18),
+    0 4px 10px rgba(15, 23, 42, 0.08);
   display: flex;
+  flex-direction: column;
+  pointer-events: auto; /* allow interactions on card itself */
+}
+
+/* ===== Header (drag handle area) ===== */
+.cr-card-header {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  position: sticky;
-  top: 0;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.85));
-  padding: 8px 4px 12px 4px;
-  z-index: 1;
+  gap: 12px;
+  padding: 12px 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  cursor: grab;
+  user-select: none;
+}
+.cr-card-header:active { cursor: grabbing; }
+
+.cr-drag-handle {
+  width: 24px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #cbd5e1, #94a3b8);
+  margin-left: 2px;
 }
 
-.claims-title-wrap h2 {
-  font-size: 20px;
+.cr-title-wrap h2 {
   margin: 0;
-  letter-spacing: 0.2px;
+  font-size: 18px;
+  font-weight: 700;
 }
-
-.claims-subtitle {
+.cr-subtitle {
   display: flex;
   gap: 8px;
   margin-top: 6px;
 }
 
-.claims-close {
+.cr-close {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e5e7eb;
-  font-size: 18px;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  font-size: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   cursor: pointer;
 }
-
-.claims-close:hover {
-  background: rgba(255, 255, 255, 0.06);
+.cr-close:hover {
+  background: #f1f5f9;
 }
 
-/* Context row */
-.claims-context {
+/* ===== Context ===== */
+.cr-context {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin: 8px 2px 14px;
+  padding: 8px 14px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fff;
+}
+.cr-context-label {
+  color: #475569;
   font-size: 12px;
-  opacity: 0.9;
-}
-.claims-context-label {
-  color: #94a3b8;
 }
 
-/* Loading / Error */
-.claims-loading, .claims-error {
-  display: grid;
-  place-items: center;
-  padding: 36px 10px;
-  color: #cbd5e1;
-  text-align: center;
-}
-.claims-spinner {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 3px solid rgba(148, 163, 184, 0.35);
-  border-top-color: #94a3b8;
-  animation: claims-spin 0.9s linear infinite;
-  margin-bottom: 12px;
-}
-@keyframes claims-spin {
-  to { transform: rotate(360deg); }
+/* ===== Body (scrollable) ===== */
+.cr-body {
+  flex: 1;
+  overflow: auto;
+  padding: 12px 14px 8px;
+  background: #fff;
 }
 
-/* Sections */
-.claims-section {
-  margin: 16px 2px;
-  padding: 14px 12px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+/* ===== Footer ===== */
+.cr-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
 
-.claims-section-header h3 {
-  margin: 0 0 2px 0;
-  font-size: 16px;
-}
-.claims-section-header p {
-  margin: 0;
-  color: #9aa7bd;
-  font-size: 13px;
-}
-
-/* Variants for quick visual separation (you can tune colors later) */
-.claims-section--diagnosis { border-left: 4px solid #7dd3fc; }
-.claims-section--labs      { border-left: 4px solid #86efac; }
-.claims-section--radiology { border-left: 4px solid #fca5a5; }
-.claims-section--other     { border-left: 4px solid #d8b4fe; }
-.claims-section--notes     { border-left: 4px solid #fde68a; }
-
-/* Pills */
-.claims-pill {
+/* ===== Pill / Buttons ===== */
+.cr-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 12px;
   padding: 4px 8px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  color: #e5e7eb;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  color: #3730a3;
 }
 
-/* Empty state */
-.claims-empty {
-  color: #9aa7bd;
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px dashed rgba(148, 163, 184, 0.25);
-  border-radius: 12px;
+.cr-btn {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #fff;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.cr-btn:hover {
+  background: #f8fafc;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+}
+.cr-btn-ghost { background: #fff; }
+.cr-btn-primary {
+  background: #2563eb;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+.cr-btn-primary:hover { filter: brightness(1.04); }
+
+/* ===== Empty / Loading / Error ===== */
+.cr-empty {
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px dashed #e2e8f0;
+  border-radius: 10px;
   padding: 10px 12px;
   font-size: 13px;
 }
 
-/* Table */
-.claims-table-wrap {
-  overflow: auto;
+.cr-loading, .cr-error {
+  display: grid;
+  place-items: center;
+  padding: 28px 10px;
+  color: #0f172a;
+  text-align: center;
 }
-.claims-table {
+.cr-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #e2e8f0;
+  border-top-color: #94a3b8;
+  animation: cr-spin 0.9s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes cr-spin { to { transform: rotate(360deg); } }
+
+/* ===== Accordion ===== */
+.cr-section {
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  margin: 10px 0;
+  background: #fff;
+}
+.cr-acc-header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 12px;
+  background: #f8fafc;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.cr-acc-header:hover { background: #eef2f7; }
+.cr-acc-titles h3 {
+  margin: 0 0 2px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.cr-acc-titles p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+.cr-acc-icon {
+  font-size: 16px;
+  color: #475569;
+}
+.cr-acc-body { padding: 12px; }
+
+/* ===== Table ===== */
+.cr-table-wrap { overflow: auto; }
+.cr-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
-.claims-table th, .claims-table td {
+.cr-table thead th {
+  font-weight: 700;
+  color: #0f172a;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+}
+.cr-table th, .cr-table td {
   text-align: left;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid #f1f5f9;
 }
-.claims-table thead th {
-  font-weight: 600;
-  color: #cbd5e1;
+.cr-icd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  color: #1f2937;
 }
 
-/* Probability bar */
-.prob-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.prob-bar {
+/* ===== Probability bar ===== */
+.cr-prob-cell { display: flex; align-items: center; gap: 10px; }
+.cr-prob-bar {
   flex: 1;
   height: 8px;
-  background: rgba(148, 163, 184, 0.18);
+  background: #e5e7eb;
   border-radius: 999px;
   overflow: hidden;
 }
-.prob-fill {
+.cr-prob-fill {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #22d3ee, #0ea5e9);
+  background: linear-gradient(90deg, #60a5fa, #2563eb);
 }
-.prob-label {
+.cr-prob-label {
   font-variant-numeric: tabular-nums;
-  color: #e2e8f0;
+  color: #0f172a;
   min-width: 42px;
   text-align: right;
 }
 
-/* Lists */
-.claims-list {
+/* ===== Lists ===== */
+.cr-list {
   list-style: none;
   margin: 8px 0 0 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
-.list-line {
+.cr-list-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px 14px;
   flex-wrap: wrap;
 }
-.item-name { color: #e5e7eb; }
-.item-code {
+.cr-item-name { color: #0f172a; }
+.cr-item-code {
   font-size: 12px;
-  color: #a5b4fc;
-  background: rgba(99,102,241,0.15);
-  border: 1px solid rgba(99,102,241,0.35);
+  color: #1d4ed8;
+  background: #e0e7ff;
+  border: 1px solid #c7d2fe;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: 999px;
 }
-.item-sub {
-  margin: 6px 0 0 0;
-  color: #9aa7bd;
-  font-size: 13px;
-}
+.cr-item-sub { margin: 6px 0 0 0; color: #475569; font-size: 13px; }
 
-/* Notes */
-.claims-notes {
+/* ===== Notes ===== */
+.cr-notes {
   white-space: pre-wrap;
-  background: rgba(234, 179, 8, 0.06);
-  border: 1px solid rgba(234, 179, 8, 0.18);
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
   padding: 10px 12px;
-  border-radius: 12px;
-  color: #fde68a;
+  border-radius: 10px;
+  color: #92400e;
   font-size: 13px;
 }
 
-/* Actions */
-.claims-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin: 18px 2px 6px;
+/* Small screens */
+@media (max-width: 640px) {
+  .cr-card {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 32px);
+  }
 }
-.btn-primary, .btn-secondary {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.14);
-  color: #e5e7eb;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  background: rgba(255,255,255,0.06);
-}
-.btn-primary {
-  background: linear-gradient(180deg, rgba(59,130,246,0.35), rgba(37,99,235,0.28));
-  border-color: rgba(59,130,246,0.35);
-}
-.btn-primary:hover { filter: brightness(1.06); }
-.btn-secondary:hover { background: rgba(255,255,255,0.1); }
+

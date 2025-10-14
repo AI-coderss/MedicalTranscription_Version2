@@ -15,3 +15,4 @@ const Sidebar = ({ setFields, onTranscriptionFinished }) => {
 export default Sidebar;
 
 
+
