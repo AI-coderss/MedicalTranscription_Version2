@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "../styles/ClaimsReviewCard.css";
 
+
 const API_BASE = "https://claims-review-backend-server.onrender.com";
 
 /* ---------- utils ---------- */
@@ -12,8 +13,6 @@ function toPercent(n) {
   if (Number.isFinite(parsed)) return Math.max(0, Math.min(100, Math.round(parsed)));
   return 0;
 }
-
-const Pill = ({ text }) => <span className="cr-pill">{text}</span>;
 const Empty = ({ text = "N/A" }) => <div className="cr-empty">{text}</div>;
 
 const copyJSON = async (obj) => {
@@ -67,10 +66,10 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
   const [err, setErr] = useState("");
   const [data, setData] = useState(null);
 
-  // Drag constraints container (full viewport layer)
+  // Drag constraints container (viewport layer)
   const layerRef = useRef(null);
   const cardRef = useRef(null);
-  const [startPos, setStartPos] = useState({ x: 24, y: 24 }); // computed on mount
+  const [startPos, setStartPos] = useState({ x: 24, y: 24 }); // computed on open
 
   const payload = useMemo(
     () => ({
@@ -94,7 +93,8 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
         });
         if (!res.ok) {
           const text = await res.text();
-          throw new Error(text || `HTTP ${res.status}`);
+          const msg = `HTTP ${res.status} ${res.statusText}${text ? ` — ${text}` : ""}`;
+          throw new Error(msg);
         }
         const json = await res.json();
         if (!abort) setData(json);
@@ -118,14 +118,9 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
     };
   }, [open, payload]);
 
-  /* compute a nice initial position (right side, full height) without blocking fields */
+  /* initial position (right side), so underlying fields remain visible */
   useEffect(() => {
     if (!open) return;
-    const layer = layerRef.current;
-    const card = cardRef.current;
-    if (!layer || !card) return;
-
-    // Place the card aligned to the right with 24px margin, 24px from top
     const vw = window.innerWidth;
     const cardWidth = Math.min(vw * 0.96, 1000);
     const x = Math.max(8, vw - cardWidth - 24);
@@ -144,65 +139,39 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
   return (
     <div
       ref={layerRef}
-      className="cr-layer" // NOTE: pointer-events: none (so underlying fields remain usable)
+      className="cr-layer"
       aria-live="polite"
     >
       <AnimatePresence>
         {open && (
           <motion.div
             ref={cardRef}
-            className="cr-card" // full-height white card
+            className="cr-card"
             role="dialog"
             aria-modal="false"
             aria-labelledby="claims-title"
-            // entry/exit animation
             initial={{ opacity: 0, scale: 0.98, x: startPos.x, y: startPos.y }}
             animate={{ opacity: 1, scale: 1, x: startPos.x, y: startPos.y }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            // draggable with constraints to the layer
             drag
             dragConstraints={layerRef}
             dragElastic={0.15}
             dragMomentum={false}
-            // allow interactions on the card only
             style={{ pointerEvents: "auto" }}
           >
-            {/* Header (drag handle area) */}
+            {/* Header (drag handle) */}
             <div className="cr-card-header" title="Drag to move">
               <div className="cr-drag-handle" />
               <div className="cr-title-wrap">
                 <h2 id="claims-title">Claims Review</h2>
-                <div className="cr-subtitle">
-                  <Pill text="RAG-assisted" />
-                  <Pill text="ICD-10" />
-                </div>
               </div>
               <button className="cr-close" onClick={onClose} aria-label="Close">
                 ✕
               </button>
             </div>
 
-            {/* Context row (non-blocking) */}
-            {payload.transcript ? (
-              <div className="cr-context">
-                <span className="cr-context-label">Transcript length:</span>
-                <Pill text={`${payload.transcript.length} chars`} />
-                {!!fields?.chiefComplaint && (
-                  <>
-                    <span className="cr-context-label">Chief complaint:</span>
-                    <Pill
-                      text={
-                        String(fields.chiefComplaint).slice(0, 64) +
-                        (String(fields.chiefComplaint).length > 64 ? "…" : "")
-                      }
-                    />
-                  </>
-                )}
-              </div>
-            ) : null}
-
-            {/* Body (scrollable) */}
+            {/* Body */}
             <div className="cr-body">
               {loading && (
                 <div className="cr-loading">
@@ -294,9 +263,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                           <li key={`${r?.name || "img"}-${i}`}>
                             <div className="cr-list-line">
                               <span className="cr-item-name">{r?.name || "-"}</span>
-                              {r?.modality ? (
-                                <span className="cr-item-code">{r.modality}</span>
-                              ) : null}
+                              {r?.modality ? <span className="cr-item-code">{r.modality}</span> : null}
                             </div>
                             {r?.rationale ? <p className="cr-item-sub">{r.rationale}</p> : null}
                           </li>
@@ -314,9 +281,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                           <li key={`${s?.name || "svc"}-${i}`}>
                             <div className="cr-list-line">
                               <span className="cr-item-name">{s?.name || "-"}</span>
-                              {s?.category ? (
-                                <span className="cr-item-code">{s.category}</span>
-                              ) : null}
+                              {s?.category ? <span className="cr-item-code">{s.category}</span> : null}
                             </div>
                             {s?.rationale ? <p className="cr-item-sub">{s?.rationale}</p> : null}
                           </li>
@@ -353,4 +318,5 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
 };
 
 export default ClaimsReviewCard;
+
 
