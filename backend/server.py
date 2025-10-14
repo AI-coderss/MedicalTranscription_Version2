@@ -35,7 +35,7 @@ app = Flask(__name__)
 CORS(app, origins=[
     "http://localhost:3000",
     "https://medicaltranscription-version2-tests.onrender.com",
-    os.getenv("CORS_ORIGIN", "")
+   "https://medicaltranscription-version2.onrender.com"
 ])
 
 # -------------------- VECTOR STORE --------------------
