@@ -5,7 +5,7 @@ import "../styles/Sidebar.css";
 const Sidebar = ({ setFields, onTranscriptionFinished }) => {
   return (
     <div className="sidebar">
-      {/* Pass through both setFields and onTranscriptionFinished */}
+      {/* Forward both props so AudioRecorder can populate fields and (optionally) call the callback */}
       <AudioRecorder setFields={setFields} onTranscriptionFinished={onTranscriptionFinished} />
       <div className="sidebar-footer">© 2024 Your Company</div>
     </div>
@@ -13,6 +13,5 @@ const Sidebar = ({ setFields, onTranscriptionFinished }) => {
 };
 
 export default Sidebar;
-
 
 

@@ -7,11 +7,11 @@ import FirstTimeVisit from "./pages/FirstTimeVisit";
 import AISecondOpinion from "./pages/AISecondOpinion";
 import ClaimsReviewCard from "./components/ClaimsReviewCard";
 
-import useClaimsReviewStore from "./store/useClaimsReviewStore"; // ⬅️ NEW
+import useTranscriptStore from "./store/useTranscriptStore"; // ⬅️ Zustand trigger source
 import "./styles/App.css";
 
 const App = () => {
-  // Local fields for FirstTimeVisit page (kept as your UI state)
+  // UI fields for FirstTimeVisit
   const [fields, setFields] = useState({
     personalHistory: "",
     chiefComplaint: "",
@@ -22,26 +22,37 @@ const App = () => {
     requiredLabTestsAndProcedures: "",
   });
 
-  // Zustand — single source of truth to open the Claims Review overlay
-  const open = useClaimsReviewStore((s) => s.open);
-  const crTranscript = useClaimsReviewStore((s) => s.transcript);
-  const crFields = useClaimsReviewStore((s) => s.fields);
-  const openClaimsReview = useClaimsReviewStore((s) => s.openClaimsReview);
-  const closeClaimsReview = useClaimsReviewStore((s) => s.closeClaimsReview);
+  // Claims Review overlay state
+  const [claimsOpen, setClaimsOpen] = useState(false);
+  const [finalTranscript, setFinalTranscript] = useState("");
 
-  // Optional callback path (besides direct store usage)
+  // Zustand transcript (set by AudioRecorder after transcription)
+  const transcript = useTranscriptStore((s) => s.transcript);
+
+  // If Sidebar (or anything) wants to explicitly open via callback/event
   const handleTranscriptionFinished = ({ transcript, fields: newFields }) => {
     if (newFields && typeof newFields === "object") {
       setFields((prev) => ({ ...prev, ...newFields }));
     }
-    openClaimsReview({ transcript, fields: newFields });
+    if (transcript) setFinalTranscript(transcript);
+    setClaimsOpen(true);
   };
 
-  // ALSO support the global event fallback
+  // Auto-open the Claims Review when the transcript is set in Zustand
+  useEffect(() => {
+    if (transcript && transcript.trim().length > 0) {
+      // open immediately; ClaimsReviewCard will refetch if fields update after
+      setFinalTranscript(transcript);
+      setClaimsOpen(true);
+      console.info("[App] Claims Review triggered by Zustand transcript (len=%d)", transcript.length);
+    }
+  }, [transcript]);
+
+  // Also support a global event fallback (belt & suspenders)
   useEffect(() => {
     const onDone = (e) => {
       const { transcript, fields: newFields } = e.detail || {};
-      console.info("[App] Global transcriptionFinished event received");
+      console.info("[App] Global dsah:transcriptionFinished received");
       handleTranscriptionFinished({ transcript, fields: newFields });
     };
     window.addEventListener("dsah:transcriptionFinished", onDone);
@@ -61,17 +72,17 @@ const App = () => {
             </Routes>
           </div>
 
-          {/* Sidebar now receives the optional callback as well */}
+          {/* Pass setFields + optional explicit callback to Sidebar/AudioRecorder */}
           <Sidebar setFields={setFields} onTranscriptionFinished={handleTranscriptionFinished} />
         </div>
 
-        {/* Claims Review overlay, driven by Zustand */}
-        {open && (
+        {/* Claims Review overlay (payload comes from local state + Zustand transcript) */}
+        {claimsOpen && (
           <ClaimsReviewCard
-            open={open}
-            onClose={closeClaimsReview}
-            transcript={crTranscript}
-            fields={crFields}
+            open={claimsOpen}
+            onClose={() => setClaimsOpen(false)}
+            transcript={finalTranscript}
+            fields={fields}
           />
         )}
       </div>
@@ -80,6 +91,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
