@@ -63,7 +63,7 @@
   gap: 6px;
 }
 
-/* Plus/Minus toggle: uses text glyphs (+ / −). Keep high contrast on light header */
+/* Plus/Minus toggle */
 .cr-collapse {
   background: transparent;
   border: none;
@@ -104,13 +104,22 @@
   outline-offset: 2px;
 }
 
-/* Body (scrollable) */
+/* Body (scrollable) — hide vertical scrollbar, keep scrolling */
 .cr-body {
   flex: 1;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: auto;                    /* scrolling enabled */
+  -webkit-overflow-scrolling: touch; /* smooth on iOS */
   padding: 12px 14px 8px;
   background: #fff;
+
+  /* Hide scrollbars cross-browser (Firefox + legacy Edge/IE) */
+  scrollbar-width: none;             /* Firefox hides all scrollbars */
+  -ms-overflow-style: none;          /* IE/Edge (legacy) */
+}
+/* Hide WebKit vertical scrollbar; scrolling still works */
+.cr-body::-webkit-scrollbar {
+  width: 0;                          /* hides vertical rail */
+  background: transparent;
 }
 
 /* Footer */
@@ -229,7 +238,7 @@
 
 /* Tables */
 .cr-table-wrap {
-  overflow: auto;
+  overflow: auto; /* horizontal scrolling when needed (scrollbar visible by default) */
 }
 .cr-table {
   width: 100%;
