@@ -64,7 +64,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [data, setData] = useState(null);
-  const [collapsed, setCollapsed] = useState(false); // <-- NEW STATE
+  const [collapsed, setCollapsed] = useState(false); // toggle state
 
   // Drag constraints container (viewport layer)
   const layerRef = useRef(null);
@@ -142,7 +142,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
         {open && (
           <motion.div
             ref={cardRef}
-            className={`cr-card ${collapsed ? "collapsed" : ""}`} // <-- NEW CLASS
+            className={`cr-card ${collapsed ? "collapsed" : ""}`}
             role="dialog"
             aria-modal="false"
             aria-labelledby="claims-title"
@@ -169,7 +169,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                   aria-label={collapsed ? "Expand" : "Collapse"}
                   title={collapsed ? "Expand Card" : "Collapse Card"}
                 >
-                  {collapsed ? "▣" : "−"}
+                  {collapsed ? "+" : "−"}
                 </button>
                 <button className="cr-close" onClick={onClose} aria-label="Close">
                   ✕
@@ -233,9 +233,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                                         <div className="cr-prob-bar">
                                           <span
                                             className="cr-prob-fill"
-                                            style={{
-                                              width: `${toPercent(d?.probability)}%`,
-                                            }}
+                                            style={{ width: `${toPercent(d?.probability)}%` }}
                                           />
                                         </div>
                                         <span className="cr-prob-label">
@@ -260,13 +258,9 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                               <li key={`${t?.name || "lab"}-${i}`}>
                                 <div className="cr-list-line">
                                   <span className="cr-item-name">{t?.name || "-"}</span>
-                                  {t?.code ? (
-                                    <span className="cr-item-code">{t.code}</span>
-                                  ) : null}
+                                  {t?.code ? <span className="cr-item-code">{t.code}</span> : null}
                                 </div>
-                                {t?.rationale ? (
-                                  <p className="cr-item-sub">{t.rationale}</p>
-                                ) : null}
+                                {t?.rationale ? <p className="cr-item-sub">{t.rationale}</p> : null}
                               </li>
                             ))}
                           </ul>
@@ -284,13 +278,9 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                               <li key={`${r?.name || "img"}-${i}`}>
                                 <div className="cr-list-line">
                                   <span className="cr-item-name">{r?.name || "-"}</span>
-                                  {r?.modality ? (
-                                    <span className="cr-item-code">{r.modality}</span>
-                                  ) : null}
+                                  {r?.modality ? <span className="cr-item-code">{r.modality}</span> : null}
                                 </div>
-                                {r?.rationale ? (
-                                  <p className="cr-item-sub">{r.rationale}</p>
-                                ) : null}
+                                {r?.rationale ? <p className="cr-item-sub">{r.rationale}</p> : null}
                               </li>
                             ))}
                           </ul>
@@ -306,13 +296,9 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
                               <li key={`${s?.name || "svc"}-${i}`}>
                                 <div className="cr-list-line">
                                   <span className="cr-item-name">{s?.name || "-"}</span>
-                                  {s?.category ? (
-                                    <span className="cr-item-code">{s.category}</span>
-                                  ) : null}
+                                  {s?.category ? <span className="cr-item-code">{s.category}</span> : null}
                                 </div>
-                                {s?.rationale ? (
-                                  <p className="cr-item-sub">{s?.rationale}</p>
-                                ) : null}
+                                {s?.rationale ? <p className="cr-item-sub">{s?.rationale}</p> : null}
                               </li>
                             ))}
                           </ul>
@@ -351,6 +337,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
 };
 
 export default ClaimsReviewCard;
+
 
 
 
