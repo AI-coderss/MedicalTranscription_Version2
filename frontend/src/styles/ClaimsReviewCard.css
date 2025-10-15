@@ -58,6 +58,34 @@
     font-size: 18px;
     font-weight: 700;
 }
+.cr-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cr-collapse {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s;
+}
+.cr-collapse:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* Collapsed State */
+.cr-card.collapsed {
+  height: auto;
+  overflow: hidden;
+}
+.cr-card.collapsed .cr-body,
+.cr-card.collapsed .cr-footer {
+  display: none;
+}
 
 .cr-close {
     background: transparent;

@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "../styles/ClaimsReviewCard.css";
 
-
 const API_BASE = "https://claims-review-backend-server.onrender.com";
 
 /* ---------- utils ---------- */
@@ -65,6 +64,7 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [data, setData] = useState(null);
+  const [collapsed, setCollapsed] = useState(false); // <-- NEW STATE
 
   // Drag constraints container (viewport layer)
   const layerRef = useRef(null);
@@ -137,16 +137,12 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
   const notes = data?.notes || "";
 
   return (
-    <div
-      ref={layerRef}
-      className="cr-layer"
-      aria-live="polite"
-    >
+    <div ref={layerRef} className="cr-layer" aria-live="polite">
       <AnimatePresence>
         {open && (
           <motion.div
             ref={cardRef}
-            className="cr-card"
+            className={`cr-card ${collapsed ? "collapsed" : ""}`} // <-- NEW CLASS
             role="dialog"
             aria-modal="false"
             aria-labelledby="claims-title"
@@ -166,150 +162,187 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
               <div className="cr-title-wrap">
                 <h2 id="claims-title">Claims Review</h2>
               </div>
-              <button className="cr-close" onClick={onClose} aria-label="Close">
-                ✕
-              </button>
+              <div className="cr-header-actions">
+                <button
+                  className="cr-collapse"
+                  onClick={() => setCollapsed((v) => !v)}
+                  aria-label={collapsed ? "Expand" : "Collapse"}
+                  title={collapsed ? "Expand Card" : "Collapse Card"}
+                >
+                  {collapsed ? "▣" : "−"}
+                </button>
+                <button className="cr-close" onClick={onClose} aria-label="Close">
+                  ✕
+                </button>
+              </div>
             </div>
 
-            {/* Body */}
-            <div className="cr-body">
-              {loading && (
-                <div className="cr-loading">
-                  <div className="cr-spinner" />
-                  <p>Analyzing transcript and retrieving clinical context…</p>
-                </div>
-              )}
-
-              {!loading && err && (
-                <div className="cr-error">
-                  <p>
-                    Could not generate claims review: <strong>{err}</strong>
-                  </p>
-                  <button className="cr-btn" onClick={() => window.location.reload()}>
-                    Reload
-                  </button>
-                </div>
-              )}
-
-              {!loading && !err && (
-                <>
-                  <Section
-                    title="Probable Diagnoses"
-                    subtitle="Ranked by probability with ICD-10 suggestions"
-                    defaultOpen
-                  >
-                    {diagnoses.length ? (
-                      <div className="cr-table-wrap">
-                        <table className="cr-table">
-                          <thead>
-                            <tr>
-                              <th>Diagnosis</th>
-                              <th>ICD-10</th>
-                              <th>Probability</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {diagnoses.map((d, i) => (
-                              <tr key={`${d?.name || "dx"}-${i}`}>
-                                <td>{d?.name || "-"}</td>
-                                <td className="cr-icd">{d?.icd10 || "-"}</td>
-                                <td>
-                                  <div className="cr-prob-cell">
-                                    <div className="cr-prob-bar">
-                                      <span
-                                        className="cr-prob-fill"
-                                        style={{ width: `${toPercent(d?.probability)}%` }}
-                                      />
-                                    </div>
-                                    <span className="cr-prob-label">
-                                      {toPercent(d?.probability)}%
-                                    </span>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      <Empty text="No diagnoses returned." />
-                    )}
-                  </Section>
-
-                  <Section title="Recommended Laboratory Tests" defaultOpen>
-                    {labs.length ? (
-                      <ul className="cr-list">
-                        {labs.map((t, i) => (
-                          <li key={`${t?.name || "lab"}-${i}`}>
-                            <div className="cr-list-line">
-                              <span className="cr-item-name">{t?.name || "-"}</span>
-                              {t?.code ? <span className="cr-item-code">{t.code}</span> : null}
-                            </div>
-                            {t?.rationale ? <p className="cr-item-sub">{t.rationale}</p> : null}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <Empty text="No lab tests suggested." />
-                    )}
-                  </Section>
-
-                  <Section title="Radiology">
-                    {typeof radiology === "string" ? (
-                      <Empty text={radiology} />
-                    ) : Array.isArray(radiology) && radiology.length ? (
-                      <ul className="cr-list">
-                        {radiology.map((r, i) => (
-                          <li key={`${r?.name || "img"}-${i}`}>
-                            <div className="cr-list-line">
-                              <span className="cr-item-name">{r?.name || "-"}</span>
-                              {r?.modality ? <span className="cr-item-code">{r.modality}</span> : null}
-                            </div>
-                            {r?.rationale ? <p className="cr-item-sub">{r.rationale}</p> : null}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <Empty text="N/A" />
-                    )}
-                  </Section>
-
-                  <Section title="Other Services">
-                    {other.length ? (
-                      <ul className="cr-list">
-                        {other.map((s, i) => (
-                          <li key={`${s?.name || "svc"}-${i}`}>
-                            <div className="cr-list-line">
-                              <span className="cr-item-name">{s?.name || "-"}</span>
-                              {s?.category ? <span className="cr-item-code">{s.category}</span> : null}
-                            </div>
-                            {s?.rationale ? <p className="cr-item-sub">{s?.rationale}</p> : null}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <Empty text="No additional services suggested." />
-                    )}
-                  </Section>
-
-                  {!!notes && (
-                    <Section title="Notes">
-                      <div className="cr-notes">{notes}</div>
-                    </Section>
+            {/* Collapsible Body */}
+            <AnimatePresence initial={false}>
+              {!collapsed && (
+                <motion.div
+                  key="body"
+                  className="cr-body"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {loading && (
+                    <div className="cr-loading">
+                      <div className="cr-spinner" />
+                      <p>Analyzing transcript and retrieving clinical context…</p>
+                    </div>
                   )}
-                </>
+
+                  {!loading && err && (
+                    <div className="cr-error">
+                      <p>
+                        Could not generate claims review: <strong>{err}</strong>
+                      </p>
+                      <button className="cr-btn" onClick={() => window.location.reload()}>
+                        Reload
+                      </button>
+                    </div>
+                  )}
+
+                  {!loading && !err && (
+                    <>
+                      <Section
+                        title="Probable Diagnoses"
+                        subtitle="Ranked by probability with ICD-10 suggestions"
+                        defaultOpen
+                      >
+                        {diagnoses.length ? (
+                          <div className="cr-table-wrap">
+                            <table className="cr-table">
+                              <thead>
+                                <tr>
+                                  <th>Diagnosis</th>
+                                  <th>ICD-10</th>
+                                  <th>Probability</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {diagnoses.map((d, i) => (
+                                  <tr key={`${d?.name || "dx"}-${i}`}>
+                                    <td>{d?.name || "-"}</td>
+                                    <td className="cr-icd">{d?.icd10 || "-"}</td>
+                                    <td>
+                                      <div className="cr-prob-cell">
+                                        <div className="cr-prob-bar">
+                                          <span
+                                            className="cr-prob-fill"
+                                            style={{
+                                              width: `${toPercent(d?.probability)}%`,
+                                            }}
+                                          />
+                                        </div>
+                                        <span className="cr-prob-label">
+                                          {toPercent(d?.probability)}%
+                                        </span>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <Empty text="No diagnoses returned." />
+                        )}
+                      </Section>
+
+                      <Section title="Recommended Laboratory Tests" defaultOpen>
+                        {labs.length ? (
+                          <ul className="cr-list">
+                            {labs.map((t, i) => (
+                              <li key={`${t?.name || "lab"}-${i}`}>
+                                <div className="cr-list-line">
+                                  <span className="cr-item-name">{t?.name || "-"}</span>
+                                  {t?.code ? (
+                                    <span className="cr-item-code">{t.code}</span>
+                                  ) : null}
+                                </div>
+                                {t?.rationale ? (
+                                  <p className="cr-item-sub">{t.rationale}</p>
+                                ) : null}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <Empty text="No lab tests suggested." />
+                        )}
+                      </Section>
+
+                      <Section title="Radiology">
+                        {typeof radiology === "string" ? (
+                          <Empty text={radiology} />
+                        ) : Array.isArray(radiology) && radiology.length ? (
+                          <ul className="cr-list">
+                            {radiology.map((r, i) => (
+                              <li key={`${r?.name || "img"}-${i}`}>
+                                <div className="cr-list-line">
+                                  <span className="cr-item-name">{r?.name || "-"}</span>
+                                  {r?.modality ? (
+                                    <span className="cr-item-code">{r.modality}</span>
+                                  ) : null}
+                                </div>
+                                {r?.rationale ? (
+                                  <p className="cr-item-sub">{r.rationale}</p>
+                                ) : null}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <Empty text="N/A" />
+                        )}
+                      </Section>
+
+                      <Section title="Other Services">
+                        {other.length ? (
+                          <ul className="cr-list">
+                            {other.map((s, i) => (
+                              <li key={`${s?.name || "svc"}-${i}`}>
+                                <div className="cr-list-line">
+                                  <span className="cr-item-name">{s?.name || "-"}</span>
+                                  {s?.category ? (
+                                    <span className="cr-item-code">{s.category}</span>
+                                  ) : null}
+                                </div>
+                                {s?.rationale ? (
+                                  <p className="cr-item-sub">{s?.rationale}</p>
+                                ) : null}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <Empty text="No additional services suggested." />
+                        )}
+                      </Section>
+
+                      {!!notes && (
+                        <Section title="Notes">
+                          <div className="cr-notes">{notes}</div>
+                        </Section>
+                      )}
+                    </>
+                  )}
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
 
             {/* Footer */}
-            <div className="cr-footer">
-              <button className="cr-btn cr-btn-ghost" onClick={() => copyJSON(data)}>
-                Copy JSON
-              </button>
-              <button className="cr-btn cr-btn-primary" onClick={onClose}>
-                Close
-              </button>
-            </div>
+            {!collapsed && (
+              <div className="cr-footer">
+                <button className="cr-btn cr-btn-ghost" onClick={() => copyJSON(data)}>
+                  Copy JSON
+                </button>
+                <button className="cr-btn cr-btn-primary" onClick={onClose}>
+                  Close
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -318,5 +351,6 @@ const ClaimsReviewCard = ({ open, onClose, transcript, fields }) => {
 };
 
 export default ClaimsReviewCard;
+
 
 
