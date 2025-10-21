@@ -14,6 +14,7 @@
     "@testing-library/user-event": "^13.5.0",
     "ajv": "^8.17.1",
     "axios": "^1.7.9",
+    "framer-motion": "^12.23.24",
     "howler": "^2.2.4",
     "jspdf": "^2.5.2",
     "mustache": "^4.2.0",

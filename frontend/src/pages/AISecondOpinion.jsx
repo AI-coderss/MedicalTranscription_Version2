@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from "react";
 import useTranscriptStore from "../store/useTranscriptStore";
 import useChatVisibilityStore from "../store/useChatVisibilityStore"; 
