@@ -114,44 +114,6 @@ const AudioRecorder = ({ setFields, onTranscriptionFinished }) => {
     handleTranscription(recordedBlob);
   };
 
-  // New: Transfer handler here
-  const handleTransfer = async () => {
-    const payload = {
-      trasncript: {
-        mrn,
-        caseNo,
-        personalHistory: fields.personalHistory || "",
-        presentIllness: fields.presentIllness || "",
-        pastHistory: fields.pastHistory || "",
-        chiefComplaint: fields.chiefComplaint || "",
-        medicationHistory: fields.medicationHistory || "",
-        familyHistory: fields.familyHistory || "",
-        HospitalCode: "01",
-        UserId,
-      },
-    };
-
-    console.log("Transfer Payload:", JSON.stringify(payload, null, 2));
-
-    try {
-      const response = await axios.post(
-        "https://emr.dsah.sa/LIVE/MRM_API/api/History/SaveHistory",
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Transfer Success:", response.data);
-      alert("Transfer successful!");
-    } catch (error) {
-      console.error("Transfer Failed:", error);
-      alert("Transfer failed. Please check the console for details.");
-    }
-  };
-
   return (
     <div className="audio-recorder">
       <h3>MEDICAL TRANSCRIPTION 🎙️</h3>
@@ -185,23 +147,12 @@ const AudioRecorder = ({ setFields, onTranscriptionFinished }) => {
           <Loader isLoading={loading} />
         </div>
       )}
-
-      {/* Show Transfer button only when loading is false and transcript is ready */}
-      {!loading && isTranscriptReady && (
-        <div className="button-wrapper" style={{ marginTop: "20px" }}>
-          <button
-            className="transfer-button w-full p-[14px_9px] text-[20px] border-l-[10px] border-[#747EF2] rounded-[12px_0_10px_0]"
-            onClick={handleTransfer}
-          >
-            Transfer
-          </button>
-        </div>
-      )}
     </div>
   );
 };
 
 export default AudioRecorder;
+
 
 
 
