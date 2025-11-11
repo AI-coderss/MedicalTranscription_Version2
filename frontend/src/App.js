@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useLocation  } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -11,6 +11,12 @@ import useClaimsReviewStore from "./store/useClaimsReviewStore";
 import "./styles/App.css";
 
 const AppWrapper = () => {
+   const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+    const mrn = queryParams.get("mrn") || "";
+  const caseNo = queryParams.get("caseNo") || "";
+  const patientName = queryParams.get("patName") || "";
+  const UserId = queryParams.get("UserId") || "";
   const [fields, setFields] = useState({
     personalHistory: "",
     chiefComplaint: "",
@@ -51,7 +57,11 @@ const AppWrapper = () => {
       <div className="content">
         <div className="main-content">
           <Routes>
-            <Route path="/" element={<FirstTimeVisit fields={fields} />} />
+            <Route path="/" element={<FirstTimeVisit fields={fields} setFields={setFields}
+                  mrn={mrn}
+                  caseNo={caseNo}
+                  patientName={patientName}
+                  UserId={UserId} />} />
             <Route path="/ai-second-opinion" element={<AISecondOpinion />} />
           </Routes>
         </div>
