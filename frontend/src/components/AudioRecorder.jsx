@@ -7,7 +7,7 @@ import useTranscriptStore from "../store/useTranscriptStore";
 import useClaimsReviewStore from "../store/useClaimsReviewStore"; // ⬅️ NEW
 import "../styles/AudioRecorder.css";
 
-const AudioRecorder = ({ setFields, fields,
+const AudioRecorder = ({ setFields, fields = {},
   mrn,caseNo,
   patientName,
   UserId, onTranscriptionFinished }) => {
